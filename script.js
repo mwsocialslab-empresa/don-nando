@@ -214,15 +214,3 @@ function cerrarMenuMobile() {
   if (bsCollapse) bsCollapse.hide();
 }
 
-function mostrarAlerta(msj, tipo = 'success') {
-  const container = document.getElementById('toast-container');
-  if (!container) return;
-  const alerta = document.createElement('div');
-  alerta.className = `custom-alert ${tipo === 'error' ? 'error' : ''}`;
-  alerta.innerHTML = `<span>${tipo === 'success' ? '✅' : '⚠️'} ${msj}</span>`;
-  container.appendChild(alerta);
-  setTimeout(() => {
-    alerta.classList.add('fade-out');
-    setTimeout(() => alerta.remove(), 400);
-  }, 2500);
-}
