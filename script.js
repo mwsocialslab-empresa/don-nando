@@ -115,7 +115,7 @@ function agregar(i) {
 
   input.value = 0;
   actualizarCarrito();
-  mostrarAlerta(`Añadido: ${prod.nombre}`);
+ 
 }
 
 function actualizarCarrito() {
@@ -191,16 +191,20 @@ function filtrar(categoria) {
 
 function enviarPedidoWhatsApp() {
   if (!carrito.length) return;
-  const direccion = document.getElementById("direccionModal").value.trim();
-  const errorDiv = document.getElementById("errorDireccion"); // Referencia al div de error
+  
+  const direccionInput = document.getElementById("direccionModal");
+  const direccion = direccionInput.value.trim();
+  const errorDiv = document.getElementById("errorDireccion");
   
   if (!direccion) {
-    if (errorDiv) errorDiv.classList.remove("d-none"); // Muestra el mensaje rojo
-    document.getElementById("direccionModal").focus();
+    // Aquí es donde hacemos que aparezca el texto rojo del HTML
+    errorDiv.classList.remove("d-none"); 
+    direccionInput.focus();
     return;
-  } else {
-    if (errorDiv) errorDiv.classList.add("d-none"); // Oculta si ya escribió algo
   }
+
+  // Si escribió la dirección, nos aseguramos de ocultar el error
+  errorDiv.classList.add("d-none");
 
   const numeroPedido = obtenerNumeroPedido();
   const fechaPedido = obtenerFechaPedido();
@@ -244,13 +248,25 @@ function obtenerFechaPedido() {
   return `${dia}/${mes}/${anio} ${hora}:${min}`;
 }
 function mostrarAlerta(mensaje, tipo = "success") {
-  // Como no tienes un sistema de Toast complejo, usamos un console.log 
-  // o puedes implementar un alert simple para no romper el flujo.
-  console.log(`${tipo.toUpperCase()}: ${mensaje}`);
-  
-  // Si quieres que el error de dirección desaparezca al escribir:
-  const direccionInput = document.getElementById("direccionModal");
-  direccionInput.addEventListener('input', () => {
-    document.getElementById("errorDireccion").classList.add("d-none");
-  });
+  // Verificamos si el mensaje es el de la dirección
+  if (mensaje === "Ingresa una dirección") {
+    const errorDiv = document.getElementById("errorDireccion");
+    if (errorDiv) {
+      errorDiv.classList.remove("d-none"); // Muestra el texto rojo
+    }
+  }
+  // No ponemos alerts ni nada más, para que no salten popups al agregar productos
 }
+
+// Agregamos esto para que el error rojo se quite SOLO cuando el usuario empiece a escribir
+document.addEventListener("DOMContentLoaded", () => {
+  const direccionInput = document.getElementById("direccionModal");
+  if (direccionInput) {
+    direccionInput.addEventListener('input', () => {
+      document.getElementById("errorDireccion").classList.add("d-none");
+    });
+  }
+});
+document.getElementById("direccionModal").addEventListener('input', function() {
+  document.getElementById("errorDireccion").classList.add("d-none");
+});
