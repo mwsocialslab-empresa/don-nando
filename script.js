@@ -192,14 +192,20 @@ function filtrar(categoria) {
 function enviarPedidoWhatsApp() {
   if (!carrito.length) return;
   const direccion = document.getElementById("direccionModal").value.trim();
+  const errorDiv = document.getElementById("errorDireccion"); // Referencia al div de error
   
   if (!direccion) {
-    mostrarAlerta("Ingresa una dirección", "error");
+    if (errorDiv) errorDiv.classList.remove("d-none"); // Muestra el mensaje rojo
     document.getElementById("direccionModal").focus();
     return;
+  } else {
+    if (errorDiv) errorDiv.classList.add("d-none"); // Oculta si ya escribió algo
   }
 
-  let msg = `🛒 *NUEVO PEDIDO*\n--------------------------\n`;
+  const numeroPedido = obtenerNumeroPedido();
+  const fechaPedido = obtenerFechaPedido();
+
+  let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n📅 ${fechaPedido}\n--------------------------\n`;
   carrito.forEach(p => {
     msg += `✅ ${p.cantidad}${p.unidad} - ${p.nombre.toUpperCase()}\n`;
   });
@@ -214,3 +220,37 @@ function cerrarMenuMobile() {
   if (bsCollapse) bsCollapse.hide();
 }
 
+// agregar numero de pedido al carrito
+function obtenerNumeroPedido() {
+  let nro = localStorage.getItem("pedido_numero");
+  nro = nro ? parseInt(nro) + 1 : 1;
+  localStorage.setItem("pedido_numero", nro);
+  return String(nro).padStart(3, "0");
+}
+function obtenerNumeroPedido() {
+  let nro = localStorage.getItem("pedido_numero");
+  nro = nro ? parseInt(nro) + 1 : 1;
+  localStorage.setItem("pedido_numero", nro);
+  return String(nro).padStart(3, "0");
+}
+function obtenerFechaPedido() {
+  const ahora = new Date();
+  const dia = String(ahora.getDate()).padStart(2, "0");
+  const mes = String(ahora.getMonth() + 1).padStart(2, "0");
+  const anio = ahora.getFullYear();
+  const hora = String(ahora.getHours()).padStart(2, "0");
+  const min = String(ahora.getMinutes()).padStart(2, "0");
+
+  return `${dia}/${mes}/${anio} ${hora}:${min}`;
+}
+function mostrarAlerta(mensaje, tipo = "success") {
+  // Como no tienes un sistema de Toast complejo, usamos un console.log 
+  // o puedes implementar un alert simple para no romper el flujo.
+  console.log(`${tipo.toUpperCase()}: ${mensaje}`);
+  
+  // Si quieres que el error de dirección desaparezca al escribir:
+  const direccionInput = document.getElementById("direccionModal");
+  direccionInput.addEventListener('input', () => {
+    document.getElementById("errorDireccion").classList.add("d-none");
+  });
+}
