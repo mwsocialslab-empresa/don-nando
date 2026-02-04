@@ -205,6 +205,9 @@ function filtrar(categoria) {
 // FINALIZAR PEDIDO (ARREGLADO PARA WHATSAPP Y CONTADOR)
 // ========================
 
+// ========================
+// CONTADOR FORMATO 000-0000
+// ========================
 function obtenerNumeroPedido() {
     let contadorTotal = parseInt(localStorage.getItem("contador_pedidos_total")) || 0;
     contadorTotal++;
@@ -216,6 +219,9 @@ function obtenerNumeroPedido() {
     return `${String(prefijo).padStart(3, "0")}-${String(sufijo).padStart(4, "0")}`;
 }
 
+// ========================
+// FINALIZAR PEDIDO (OPTIMIZADO iOS/ANDROID)
+// ========================
 function enviarPedidoWhatsApp() {
     if (!carrito.length) return;
 
@@ -231,13 +237,13 @@ function enviarPedidoWhatsApp() {
 
     errorDiv.classList.add("d-none");
 
+    // Feedback visual en el botón
     const btnEnviar = document.querySelector(".btn-success-pedido");
     if (btnEnviar) {
         btnEnviar.disabled = true;
-        btnEnviar.innerHTML = "Abriendo WhatsApp...";
+        btnEnviar.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Redirigiendo...';
     }
 
-    // 1. Generamos los datos del pedido
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
     const aliasMP = "walter30mp";
@@ -257,52 +263,40 @@ function enviarPedidoWhatsApp() {
 
     const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
 
-    // 2. Intentamos guardar en Sheets (sin esperar respuesta para no trabar el móvil)
-    try {
-        fetch(URL_SHEETS, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                pedido: numeroPedido,
-                fecha: fechaPedido,
-                productos: carrito.map(p => `${p.cantidad}${p.unidad} ${p.nombre}`).join("\n"),
-                total: total.toFixed(2),
-                direccion: direccion,
-            })
-        });
-    } catch (e) {
-        console.log("Error en Sheets, pero seguimos con WhatsApp");
-    }
+    // 1. Disparamos el guardado en Sheets (sin esperar)
+    fetch(URL_SHEETS, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            pedido: numeroPedido,
+            fecha: fechaPedido,
+            productos: carrito.map(p => `${p.cantidad}${p.unidad} ${p.nombre}`).join("\n"),
+            total: total.toFixed(2),
+            direccion: direccion,
+        })
+    });
 
-    // 3. LA CLAVE: Redirección inmediata
-    // Usamos una pequeña demora de solo 100ms para asegurar que el navegador registre el fetch
-    setTimeout(() => {
-        const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
-        if (esMovil) {
-            // En móvil, la mejor forma de evitar bloqueos es location.replace o location.href
-            window.location.replace(whatsappUrl);
-        } else {
-            // En PC abrimos en pestaña nueva
-            window.open(whatsappUrl, "_blank");
-        }
-    }, 100);
+    // 2. Redirección inmediata
+    // En iPhone (como el de tu foto), window.location.href es lo que mejor funciona
+    // para que al darle a "Abrir" salte directo a la App.
+    window.location.href = whatsappUrl;
 
-    // 4. Limpiamos el carrito después de que el usuario ya se fue a WhatsApp
+    // 3. Limpieza de interfaz (con tiempo suficiente para que el usuario cambie de App)
     setTimeout(() => {
         carrito = [];
         actualizarCarrito();
+        
         if (btnEnviar) {
             btnEnviar.disabled = false;
             btnEnviar.innerText = "Enviar Pedido";
         }
+
+        // Cerramos el modal
         const modalElt = document.getElementById('modalCarrito');
-        if (modalElt) {
-            const modalInst = bootstrap.Modal.getInstance(modalElt);
-            if (modalInst) modalInst.hide();
-        }
-    }, 1500);
+        const modalInst = bootstrap.Modal.getInstance(modalElt);
+        if(modalInst) modalInst.hide();
+    }, 1000);
 }
 
 function cerrarMenuMobile() {
