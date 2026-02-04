@@ -311,20 +311,29 @@ function cerrarMenuMobile() {
 // ========================
 // UTILIDADES
 // ========================
-
 function obtenerNumeroPedido() {
-    const ahora = new Date();
-    // Crea un ID único basado en: AñoMesDía-HoraMinutoSegundo
-    // Ejemplo: 20231025-143005
-    const idUnico = ahora.getFullYear().toString() +
-        String(ahora.getMonth() + 1).padStart(2, '0') +
-        String(ahora.getDate()).padStart(2, '0') + "-" +
-        String(ahora.getHours()).padStart(2, '0') +
-        String(ahora.getMinutes()).padStart(2, '0') +
-        String(ahora.getSeconds()).padStart(2, '0');
+    // 1. Obtenemos el contador total almacenado (o empezamos en 0)
+    let contadorTotal = parseInt(localStorage.getItem("contador_pedidos_total")) || 0;
     
-    return idUnico;
+    // 2. Incrementamos para el nuevo pedido
+    contadorTotal++;
+    
+    // 3. Guardamos el nuevo total para la próxima vez
+    localStorage.setItem("contador_pedidos_total", contadorTotal);
+    
+    // 4. Lógica de formato 000-0000
+    // El prefijo (primeros 3 dígitos) es el total dividido 10000
+    // El sufijo (últimos 4 dígitos) es el resto de esa división
+    const prefijo = Math.floor(contadorTotal / 10000);
+    const sufijo = contadorTotal % 10000;
+    
+    // 5. Formateamos con ceros a la izquierda
+    const parte1 = String(prefijo).padStart(3, "0");
+    const parte2 = String(sufijo).padStart(4, "0");
+    
+    return `${parte1}-${parte2}`;
 }
+
 function obtenerFechaPedido() {
     const ahora = new Date();
     return `${String(ahora.getDate()).padStart(2, "0")}/${String(ahora.getMonth() + 1).padStart(2, "0")}/${ahora.getFullYear()} ${String(ahora.getHours()).padStart(2, "0")}:${String(ahora.getMinutes()).padStart(2, "0")}`;
