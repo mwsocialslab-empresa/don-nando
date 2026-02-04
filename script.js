@@ -214,92 +214,24 @@ function filtrar(categoria) {
 // FINALIZAR PEDIDO
 // ========================
 
-async function enviarPedidoWhatsApp() {
-    if (!carrito.length) return;
-
-    const direccionInput = document.getElementById("direccionModal");
-    const direccion = direccionInput.value.trim();
-    const errorDiv = document.getElementById("errorDireccion");
-
-    if (!direccion) {
-        errorDiv.classList.remove("d-none");
-        direccionInput.focus();
-        return;
-    }
-
-    errorDiv.classList.add("d-none");
-
-    const btnEnviar = document.querySelector(".btn-success-pedido");
-    if (btnEnviar) {
-        btnEnviar.disabled = true;
-        btnEnviar.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Enviando...';
-    }
-
-    const numeroPedido = obtenerNumeroPedido();
-    const fechaPedido = obtenerFechaPedido();
-    const aliasMP = "walter30mp";
-    const linkPago = `https://www.mercadopago.com.ar/home?alias=${aliasMP}`;
-
-    let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
-    msg += `📅 ${fechaPedido}\n`;
-    msg += `--------------------------\n`;
-    carrito.forEach(p => {
-        msg += `✅ ${p.cantidad}${p.unidad} - ${p.nombre.toUpperCase()}\n`;
-    });
-    msg += `--------------------------\n`;
-    msg += `📍 *Dir:* ${direccion}\n`;
-    msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
-    msg += `💳 *Pagá con Mercado Pago:* ${linkPago}\n\n`;
-    msg += `🙏 ¡Gracias por tu compra!`;
-
-    const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
-
-    try {
-        // Ejecutamos el guardado en Sheets SIN esperar a que termine para no bloquear el redireccionamiento
-        fetch(URL_SHEETS, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                pedido: numeroPedido,
-                fecha: fechaPedido,
-                productos: carrito.map(p => `${p.cantidad}${p.unidad} ${p.nombre}`).join("\n"),
-                total: total.toFixed(2),
-                direccion: direccion,
-            })
-        });
-
-        // EN MÓVIL: window.location.href es mucho más fiable que window.open
-        // Detectamos si es móvil de forma sencilla
-        const esMovil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        
-        if (esMovil) {
-            window.location.href = whatsappUrl;
-        } else {
-            window.open(whatsappUrl, "_blank");
-        }
-
-        // Limpiamos el carrito después de un momento
-        setTimeout(() => {
-            carrito = [];
-            actualizarCarrito();
-            if (btnEnviar) {
-                btnEnviar.disabled = false;
-                btnEnviar.innerText = "Pedido Enviado";
-            }
-            // Cerrar modal si usas Bootstrap
-            const modalElt = document.getElementById('modalCarrito');
-            if(modalElt) {
-                const modalInst = bootstrap.Modal.getInstance(modalElt);
-                if(modalInst) modalInst.hide();
-            }
-        }, 1000);
-
-    } catch (error) {
-        console.error("Error:", error);
-        // Si todo falla, al menos intentamos abrir WhatsApp
-        window.location.href = whatsappUrl;
-    }
+function obtenerNumeroPedido() {
+    // 1. Obtenemos el contador total (o empezamos en 0)
+    let contadorTotal = parseInt(localStorage.getItem("contador_pedidos_total")) || 0;
+    
+    // 2. Incrementamos
+    contadorTotal++;
+    
+    // 3. Guardamos para el próximo pedido
+    localStorage.setItem("contador_pedidos_total", contadorTotal);
+    
+    // 4. Formato 000-0000 (Ej: 1500 -> 000-1500 | 10500 -> 001-0500)
+    const prefijo = Math.floor(contadorTotal / 10000);
+    const sufijo = contadorTotal % 10000;
+    
+    const parte1 = String(prefijo).padStart(3, "0");
+    const parte2 = String(sufijo).padStart(4, "0");
+    
+    return `${parte1}-${parte2}`;
 }
 
 function cerrarMenuMobile() {
