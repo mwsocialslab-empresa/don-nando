@@ -234,9 +234,10 @@ function enviarPedidoWhatsApp() {
     const btnEnviar = document.querySelector(".btn-success-pedido");
     if (btnEnviar) {
         btnEnviar.disabled = true;
-        btnEnviar.innerHTML = "Procesando...";
+        btnEnviar.innerHTML = "Abriendo WhatsApp...";
     }
 
+    // 1. Generamos los datos del pedido
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
     const aliasMP = "walter30mp";
@@ -256,29 +257,39 @@ function enviarPedidoWhatsApp() {
 
     const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
 
-    // Envío a Google Sheets en segundo plano (sin await para no bloquear la redirección)
-    fetch(URL_SHEETS, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            pedido: numeroPedido,
-            fecha: fechaPedido,
-            productos: carrito.map(p => `${p.cantidad}${p.unidad} ${p.nombre}`).join("\n"),
-            total: total.toFixed(2),
-            direccion: direccion,
-        })
-    });
-
-    // Redirección directa según dispositivo para evitar bloqueos
-    const esMovil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (esMovil) {
-        window.location.href = whatsappUrl;
-    } else {
-        window.open(whatsappUrl, "_blank");
+    // 2. Intentamos guardar en Sheets (sin esperar respuesta para no trabar el móvil)
+    try {
+        fetch(URL_SHEETS, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                pedido: numeroPedido,
+                fecha: fechaPedido,
+                productos: carrito.map(p => `${p.cantidad}${p.unidad} ${p.nombre}`).join("\n"),
+                total: total.toFixed(2),
+                direccion: direccion,
+            })
+        });
+    } catch (e) {
+        console.log("Error en Sheets, pero seguimos con WhatsApp");
     }
 
-    // Limpieza de interfaz diferida
+    // 3. LA CLAVE: Redirección inmediata
+    // Usamos una pequeña demora de solo 100ms para asegurar que el navegador registre el fetch
+    setTimeout(() => {
+        const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (esMovil) {
+            // En móvil, la mejor forma de evitar bloqueos es location.replace o location.href
+            window.location.replace(whatsappUrl);
+        } else {
+            // En PC abrimos en pestaña nueva
+            window.open(whatsappUrl, "_blank");
+        }
+    }, 100);
+
+    // 4. Limpiamos el carrito después de que el usuario ya se fue a WhatsApp
     setTimeout(() => {
         carrito = [];
         actualizarCarrito();
@@ -287,11 +298,11 @@ function enviarPedidoWhatsApp() {
             btnEnviar.innerText = "Enviar Pedido";
         }
         const modalElt = document.getElementById('modalCarrito');
-        if(modalElt){
+        if (modalElt) {
             const modalInst = bootstrap.Modal.getInstance(modalElt);
-            if(modalInst) modalInst.hide();
+            if (modalInst) modalInst.hide();
         }
-    }, 800);
+    }, 1500);
 }
 
 function cerrarMenuMobile() {
