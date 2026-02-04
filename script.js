@@ -216,11 +216,26 @@ function enviarPedidoWhatsApp() {
   const numeroPedido = obtenerNumeroPedido();
   const fechaPedido = obtenerFechaPedido();
 
-  let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n📅 ${fechaPedido}\n--------------------------\n`;
+  // 🔗 LINK DE PAGO (alias Mercado Pago)
+  const aliasMP = "walter30mp";
+  const linkPago = `https://www.mercadopago.com.ar/home?alias=${aliasMP}`;
+
+  let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
+  msg += `📅 ${fechaPedido}\n`;
+  msg += `--------------------------\n`;
+
   carrito.forEach(p => {
     msg += `✅ ${p.cantidad}${p.unidad} - ${p.nombre.toUpperCase()}\n`;
   });
-  msg += `--------------------------\n📍 *Dir:* ${direccion}\n💰 *Total:* $${total.toFixed(2)}`;
+
+  msg += `--------------------------\n`;
+  msg += `📍 *Dir:* ${direccion}\n`;
+  msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
+
+  msg += `💳 *Pagá con Mercado Pago desde este link:*\n`;
+  msg += `👉 ${linkPago}\n\n`;
+  msg += `📎 Luego enviá el comprobante por este chat.\n`;
+  msg += `🙏 ¡Gracias por tu compra!`;
 
   window.open(
     `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`,
