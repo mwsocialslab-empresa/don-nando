@@ -249,7 +249,7 @@ button,
 }
 
 .logo-marca {
-  height: 40px;      /* Ajusta esta altura según te guste */
+  height: 55px;      /* Ajusta esta altura según te guste */
   width: auto;       /* Mantiene la proporción original */
   object-fit: contain;
   display: block;
