@@ -1,11 +1,30 @@
+/* Aplicar la fuente a absolutamente todo el sitio */
+/* Aplicar la fuente a absolutamente todo el sitio */
+* {
+  font-family: 'Roboto Condensed', sans-serif !important;
+}
+
+body {
+  background-color: #f8f9fa;
+  margin: 0;
+  overflow-x: hidden; 
+}
+
+/* Pesos específicos */
+h1, h2, h3, h4, h5, h6, .navbar-brand, .fw-bold {
+  font-weight: 800 !important;
+}
+
+p, span, .nav-link, label {
+  font-weight: 400;
+}
 /* =========================================
    CONFIGURACIÓN GENERAL
    ========================================= */
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Roboto Condensed', sans-serif; /* Nueva fuente aplicada */
   background-color: #f8f9fa;
   margin: 0;
-  /* Evita desbordamientos horizontales extraños */
   overflow-x: hidden; 
 }
 
@@ -52,7 +71,7 @@ body {
 .card-body h6 {
   text-align: left;
   font-size: 0.95rem;
-  min-height: 2.4em;
+  min-height: 1.4em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -63,7 +82,7 @@ body {
 
 .card-body .text-success {
   display: block;
-  text-align: center;
+  text-align: left;
 }
 
 /* Sumador de kilos */
