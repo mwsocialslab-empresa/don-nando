@@ -265,4 +265,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-<script src="script.js?v=2"></script>
+<script src="script.js"></script>
