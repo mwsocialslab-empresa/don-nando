@@ -204,7 +204,6 @@ function filtrar(categoria) {
 // ========================
 // FINALIZAR PEDIDO (ARREGLADO PARA WHATSAPP Y CONTADOR)
 // ========================
-
 // ========================
 // CONTADOR FORMATO 000-0000
 // ========================
@@ -213,10 +212,89 @@ function obtenerNumeroPedido() {
     contadorTotal++;
     localStorage.setItem("contador_pedidos_total", contadorTotal);
     
+    // Divide el número para crear el formato 000-0000
     const prefijo = Math.floor(contadorTotal / 10000);
     const sufijo = contadorTotal % 10000;
     
     return `${String(prefijo).padStart(3, "0")}-${String(sufijo).padStart(4, "0")}`;
+}
+
+// ========================
+// FINALIZAR PEDIDO (OPTIMIZADO)
+// ========================
+function enviarPedidoWhatsApp() {
+    if (!carrito.length) return;
+
+    const direccionInput = document.getElementById("direccionModal");
+    const direccion = direccionInput.value.trim();
+    const errorDiv = document.getElementById("errorDireccion");
+
+    if (!direccion) {
+        errorDiv.classList.remove("d-none");
+        direccionInput.focus();
+        return;
+    }
+
+    errorDiv.classList.add("d-none");
+
+    const btnEnviar = document.querySelector(".btn-success-pedido");
+    if (btnEnviar) {
+        btnEnviar.disabled = true;
+        btnEnviar.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Redirigiendo...';
+    }
+
+    const numeroPedido = obtenerNumeroPedido();
+    const fechaPedido = obtenerFechaPedido();
+    const aliasMP = "walter30mp";
+    const linkPago = `https://www.mercadopago.com.ar/home?alias=${aliasMP}`;
+
+    let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
+    msg += `📅 ${fechaPedido}\n`;
+    msg += `--------------------------\n`;
+    carrito.forEach(p => {
+        msg += `✅ ${p.cantidad}${p.unidad} - ${p.nombre.toUpperCase()}\n`;
+    });
+    msg += `--------------------------\n`;
+    msg += `📍 *Dir:* ${direccion}\n`;
+    msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
+    msg += `💳 *Pagá con Mercado Pago:* ${linkPago}\n\n`;
+    msg += `🙏 ¡Gracias por tu compra!`;
+
+    const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
+
+    // 1. Guardar en Sheets (en segundo plano)
+    fetch(URL_SHEETS, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            pedido: numeroPedido,
+            fecha: fechaPedido,
+            productos: carrito.map(p => `${p.cantidad}${p.unidad} ${p.nombre}`).join("\n"),
+            total: total.toFixed(2),
+            direccion: direccion,
+        })
+    });
+
+    // 2. Redirección inmediata (Especial para evitar bloqueos en iPhone)
+    window.location.href = whatsappUrl;
+
+    // 3. Limpieza de interfaz después de un momento
+    setTimeout(() => {
+        carrito = [];
+        actualizarCarrito();
+        
+        if (btnEnviar) {
+            btnEnviar.disabled = false;
+            btnEnviar.innerText = "Confirmar y enviar pedido";
+        }
+
+        const modalElt = document.getElementById('modalCarrito');
+        if (modalElt) {
+            const modalInst = bootstrap.Modal.getInstance(modalElt);
+            if (modalInst) modalInst.hide();
+        }
+    }, 1200);
 }
 
 // ========================

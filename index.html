@@ -76,20 +76,23 @@
         </div>
 
         <div class="direccion-container mb-3">
-          <label class="form-label small fw-bold text-uppercase text-muted tracking-wider">📍 Entrega</label>
+          <label class="form-label small fw-bold text-uppercase text-muted">📍 Entrega</label>
           <div class="input-group custom-input-group">
             <span class="input-group-text bg-white border-end-0">
               <span class="opacity-50">🏠</span>
             </span>
             <input type="text" id="direccionModal" 
-                   class="form-control border-start-0 ps-0" 
-                   placeholder="Calle, número y localidad">
+                  class="form-control border-start-0 ps-0" 
+                  placeholder="Calle, número y localidad">
           </div>
           <div id="errorDireccion" class="text-danger small mt-1 d-none">Por favor, Ingresá una dirección para enviar tu pedido.</div>
         </div>
 
+        <p class="text-center text-muted mb-2" style="font-size: 0.85rem;">
+          Se abrirá WhatsApp para confirmar tu pedido
+        </p>
 
-        <button class="btn btn-whatsapp w-100 py-3 fw-bold shadow-sm mb-2" onclick="enviarPedidoWhatsApp()">
+        <button class="btn btn-whatsapp w-100 py-3 fw-bold shadow-sm mb-2 btn-success-pedido" onclick="enviarPedidoWhatsApp()">
           Confirmar y enviar pedido
         </button>
         
