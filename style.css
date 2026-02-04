@@ -232,3 +232,8 @@ body {
   }
   h6 { font-size: 0.9rem; }
 }
+button, 
+.btn, 
+.input-group button {
+    touch-action: manipulation;
+}
