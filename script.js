@@ -71,7 +71,7 @@ function renderizarProductos(data) {
             </div>
 
             <div class="card-body p-2 d-flex flex-column">
-              <h6 class="fw-bold mb-1 text-capitalize text-start" style="font-size:1.25rem;">
+              <h6 class="fw-bold text-capitalize text-start" style="font-size:1.25rem;">
                 ${p.nombre.toLowerCase()}
               </h6>
 
