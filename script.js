@@ -1,4 +1,4 @@
-const URL_SHEETS = "https://script.google.com/macros/s/AKfycbwb9EhIdBKP2Jqoo1BnYF35cUg304CzvLQzpS0BG1tCqFJ8fCowHLyfgMk_QWZb0jg9Sg/exec";
+const URL_SHEETS = "https://script.google.com/macros/s/AKfycbx1xQq6B54oWoKDnE36gi7ATNEODIsjoX69YdmmjUcOF3HU2lvbQlLK3BX450r7KsrdfQ/exec";
 
 let carrito = [];
 let productos = [];
@@ -236,6 +236,23 @@ function enviarPedidoWhatsApp() {
   msg += `👉 ${linkPago}\n\n`;
   msg += `📎 Luego enviá el comprobante por este chat.\n`;
   msg += `🙏 ¡Gracias por tu compra!`;
+
+  fetch(URL_SHEETS, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    pedido: numeroPedido,
+    fecha: fechaPedido,
+    productos: carrito.map(p =>
+      `${p.cantidad}${p.unidad} ${p.nombre}`
+    ).join(" | "),
+    total: total.toFixed(2),
+    direccion: direccion,
+    telefono: "" // si después lo pedís, acá va
+  })
+});
 
   window.open(
     `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`,
