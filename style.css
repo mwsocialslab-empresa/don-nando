@@ -120,7 +120,7 @@ body {
 }
 
 .btn-cart-nav:hover {
-  background-color: #20c276;
+  background-color: #1fb66f;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.05);
