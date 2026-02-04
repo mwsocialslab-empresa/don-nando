@@ -187,12 +187,15 @@ function eliminar(i) {
 }
 
 function vaciarCarrito() {
-    if (confirm("¿Vaciar todo el carrito?")) {
-        carrito = [];
-        actualizarCarrito();
-    }
+    // Eliminamos el 'if (confirm(...))' para que sea directo
+    carrito = [];
+    actualizarCarrito();
+    
+    // Opcional: Cerrar el modal automáticamente al vaciar
+    const modalElt = document.getElementById('modalCarrito');
+    const modalInst = bootstrap.Modal.getInstance(modalElt);
+    if(modalInst) modalInst.hide();
 }
-
 function filtrar(categoria) {
     document.querySelectorAll(".producto").forEach(p => {
         const cat = p.dataset.categoria;

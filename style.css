@@ -5,9 +5,11 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: #f8f9fa;
   margin: 0;
+  /* Evita desbordamientos horizontales extraños */
+  overflow-x: hidden; 
 }
 
-/* Header Delgado (Aprox 0.25cm / 25px alto) */
+/* Header Delgado */
 .main-header {
   background: linear-gradient(135deg, #198754, #146c43);
   line-height: 1.2;
@@ -19,7 +21,7 @@ body {
 }
 
 .main-header p {
-  font-size: 0.75rem; /* Tamaño optimizado para franja delgada */
+  font-size: 0.75rem;
   margin: 0;
   color: white;
   font-weight: bold;
@@ -30,7 +32,7 @@ body {
    ========================================= */
 .card {
   transition: transform 0.2s, box-shadow 0.2s;
-  border-radius: 15px !important; /* Bordes suaves según tu última petición */
+  border-radius: 15px !important;
   border: none;
   overflow: hidden;
 }
@@ -41,15 +43,14 @@ body {
 
 .card-img-top {
   width: 100%;
-  aspect-ratio: 1 / 1; /* Cuadrado perfecto */
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   background-color: #f8f9fa;
-  border-radius: 12px !important; /* Imagen con bordes internos redondeados */
+  border-radius: 12px !important;
 }
 
-/* Alineación solicitada: Nombre izq, Precio centro, Selector centro */
 .card-body h6 {
-  text-align: left; /* Nombre a la izquierda */
+  text-align: left;
   font-size: 0.95rem;
   min-height: 2.4em;
   display: -webkit-box;
@@ -62,52 +63,42 @@ body {
 
 .card-body .text-success {
   display: block;
-  text-align: center; /* Precio al centro */
+  text-align: center;
 }
 
-/* Sumador de kilos al centro */
+/* Sumador de kilos */
 .card-body .input-group {
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
 }
 
-.input-group .btn {
-  width: 35px;
-  font-weight: bold;
-  background-color: #fff;
-  border: 1px solid #dee2e6;
-}
-
-.input-group input {
-  max-width: 100%;
-  font-size: 0.9rem;
-  font-weight: bold;
-}
-/* Ajuste para el sumador de kilos */
 .input-group-sm {
-  width: 115px !important; /* Aumentamos de 100px a 115px para que entre el 0.5 */
+  width: 115px !important;
   background-color: #fff;
   border: 1px solid #dee2e6;
   border-radius: 8px;
 }
 
 .input-group-sm .btn {
-  width: 32px !important; /* Botones un poco más delgados */
+  width: 32px !important;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f8f9fa;
+  /* Optimiza respuesta táctil */
+  touch-action: manipulation; 
 }
 
 .input-group-sm input {
-  max-width: 50px !important; /* Más espacio para el texto */
+  max-width: 50px !important;
   padding: 0 !important;
   font-size: 0.9rem;
   height: 31px;
   border: none !important;
 }
+
 /* =========================================
    COMPONENTES DE CARRITO Y NAV
    ========================================= */
@@ -117,18 +108,7 @@ body {
   border-radius: 10px;
   padding: 8px 12px;
   transition: all 0.3s ease;
-}
-
-.btn-cart-nav:hover {
-  background-color: #1fb66f;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-}
-
-.nav-link {
-  font-weight: 500;
-  color: #555 !important;
+  touch-action: manipulation;
 }
 
 #carritoFlotante {
@@ -146,24 +126,46 @@ body {
   border: none;
   background-color: #198754;
   color: white;
-}
-
-#contadorCarrito {
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 12px;
+  touch-action: manipulation;
 }
 
 /* =========================================
-   MODAL Y ALERTAS
+   MODAL (CARRITO) - CORRECCIÓN DE ANCHO
    ========================================= */
+.modal-content {
+  border-radius: 15px !important;
+  border: none;
+}
+
 .scroll-carrito {
-  max-height: 300px;
+  max-height: 350px;
   overflow-y: auto;
   margin-bottom: 15px;
 }
 
+/* Ajustes para móviles: Carrito Ancho Completo */
+@media (max-width: 576px) {
+  .modal-dialog {
+    margin: 0.5rem; /* Margen pequeño en bordes */
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 1rem);
+  }
+
+  .modal-content {
+    width: 100% !important; /* Fuerza el ancho total de la pantalla */
+    margin: 0 auto;
+  }
+
+  .card-img-top {
+    height: auto;
+  }
+  h6 { font-size: 0.9rem; }
+}
+
+/* =========================================
+   BOTONES DE ACCIÓN
+   ========================================= */
 .btn-whatsapp {
   background-color: #25d366;
   color: white;
@@ -172,20 +174,17 @@ body {
   transition: all 0.3s ease;
   padding: 12px;
   font-weight: bold;
-}
-
-.btn-whatsapp:hover {
-  background-color: #128c7e;
-  transform: translateY(-2px);
+  touch-action: manipulation;
 }
 
 .btn-vaciar-carrito {
   background-color: #fff1f0;
   color: #dc3545;
-  border: 1px solid #e62f1f;
+  border: 1px solid #dc3545;
   border-radius: 12px;
   transition: all 0.3s ease;
   font-size: 0.9rem;
+  touch-action: manipulation;
 }
 
 .btn-vaciar-carrito:hover {
@@ -193,28 +192,15 @@ body {
   color: white;
 }
 
-/* Alertas estilo Toast */
-.custom-alert {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-left: 5px solid #198754;
-  color: #333;
-  min-width: 280px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  padding: 15px 20px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  animation: slideUp 0.4s ease-out;
+/* Bloqueo global de zoom por doble toque en botones */
+button, 
+.btn, 
+.input-group button,
+.nav-link {
+    touch-action: manipulation;
 }
 
-.custom-alert.error { border-left-color: #dc3545; }
-
-/* =========================================
-   ANIMACIONES Y RESPONSIVE
-   ========================================= */
+/* Animaciones */
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(100%); }
   to { opacity: 1; transform: translateY(0); }
@@ -224,16 +210,4 @@ body {
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.4s ease;
-}
-
-@media (max-width: 576px) {
-  .card-img-top {
-    height: auto; /* Prioriza aspect-ratio */
-  }
-  h6 { font-size: 0.9rem; }
-}
-button, 
-.btn, 
-.input-group button {
-    touch-action: manipulation;
 }
