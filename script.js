@@ -232,7 +232,7 @@ async function enviarPedidoWhatsApp() {
     const btnEnviar = document.querySelector(".btn-success-pedido");
     if (btnEnviar) {
         btnEnviar.disabled = true;
-        btnEnviar.innerText = "Enviando..."; // Feedback visual sin alerts
+        btnEnviar.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Enviando...';
     }
 
     const numeroPedido = obtenerNumeroPedido();
@@ -252,9 +252,11 @@ async function enviarPedidoWhatsApp() {
     msg += `💳 *Pagá con Mercado Pago:* ${linkPago}\n\n`;
     msg += `🙏 ¡Gracias por tu compra!`;
 
+    const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
+
     try {
-        // Guardamos en Google Sheets
-        await fetch(URL_SHEETS, {
+        // Ejecutamos el guardado en Sheets SIN esperar a que termine para no bloquear el redireccionamiento
+        fetch(URL_SHEETS, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
@@ -267,33 +269,36 @@ async function enviarPedidoWhatsApp() {
             })
         });
 
-        // Preparamos el link de WhatsApp
-        const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
+        // EN MÓVIL: window.location.href es mucho más fiable que window.open
+        // Detectamos si es móvil de forma sencilla
+        const esMovil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         
-        // Abrimos WhatsApp
-        window.open(whatsappUrl, "_blank");
+        if (esMovil) {
+            window.location.href = whatsappUrl;
+        } else {
+            window.open(whatsappUrl, "_blank");
+        }
 
-        // Limpiamos el carrito con un leve retraso para no interrumpir el window.open
+        // Limpiamos el carrito después de un momento
         setTimeout(() => {
             carrito = [];
             actualizarCarrito();
-            // Cerramos el modal si existe (usando Bootstrap)
-            const modalElement = document.getElementById('modalCarrito');
-            if (modalElement) {
-                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                if (modalInstance) modalInstance.hide();
-            }
             if (btnEnviar) {
                 btnEnviar.disabled = false;
-                btnEnviar.innerText = "Enviar Pedido";
+                btnEnviar.innerText = "Pedido Enviado";
             }
-        }, 500);
+            // Cerrar modal si usas Bootstrap
+            const modalElt = document.getElementById('modalCarrito');
+            if(modalElt) {
+                const modalInst = bootstrap.Modal.getInstance(modalElt);
+                if(modalInst) modalInst.hide();
+            }
+        }, 1000);
 
     } catch (error) {
         console.error("Error:", error);
-        // Si falla Sheets, igual intentamos mandar el WhatsApp
-        const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
-        window.open(whatsappUrl, "_blank");
+        // Si todo falla, al menos intentamos abrir WhatsApp
+        window.location.href = whatsappUrl;
     }
 }
 
