@@ -16,7 +16,6 @@ const cacheLocal = localStorage.getItem(CACHE_KEY);
 const ultimaCarga = localStorage.getItem(CACHE_TIME_KEY);
 const ahora = Date.now();
 
-// Si hay cache y es reciente, cargamos de inmediato
 if (cacheLocal && ultimaCarga && (ahora - ultimaCarga < mediaHora)) {
     renderizarProductos(JSON.parse(cacheLocal));
 } else {
@@ -45,7 +44,7 @@ function cargarDesdeSheets() {
 
 function renderizarProductos(data) {
     const contenedor = document.getElementById("productos");
-    let htmlFinal = ""; // Acumulamos todo aquí para que cargue más rápido
+    let htmlFinal = ""; 
     productos = [];
     let index = 0;
 
@@ -102,7 +101,7 @@ function renderizarProductos(data) {
             index++;
         });
     }
-    contenedor.innerHTML = htmlFinal; // Una sola escritura al DOM
+    contenedor.innerHTML = htmlFinal;
 }
 
 // ========================
@@ -148,14 +147,12 @@ function actualizarCarrito() {
     total = 0;
 
     if (!carrito.length) {
-        listaModal.innerHTML =
-            `<p class="text-center text-muted py-3">El carrito está vacío</p>`;
+        listaModal.innerHTML = `<p class="text-center text-muted py-3">El carrito está vacío</p>`;
     } else {
         carrito.forEach((p, i) => {
             const sub = p.precio * p.cantidad;
             total += sub;
-            const nombrePro =
-                p.nombre.charAt(0).toUpperCase() + p.nombre.slice(1).toLowerCase();
+            const nombrePro = p.nombre.charAt(0).toUpperCase() + p.nombre.slice(1).toLowerCase();
 
             listaModal.innerHTML += `
         <div class="d-flex justify-content-between align-items-center border-bottom py-2">
@@ -165,8 +162,7 @@ function actualizarCarrito() {
           </div>
           <div class="d-flex align-items-center">
             <span class="me-2 fw-bold">$${sub.toFixed(2)}</span>
-            <button class="btn btn-sm text-danger border-0"
-                    onclick="eliminar(${i})">✕</button>
+            <button class="btn btn-sm text-danger border-0" onclick="eliminar(${i})">✕</button>
           </div>
         </div>
       `;
@@ -201,69 +197,107 @@ function filtrar(categoria) {
     document.querySelectorAll(".producto").forEach(p => {
         const cat = p.dataset.categoria;
         const esOferta = p.dataset.oferta === "true";
-        p.style.display =
-            (categoria === "todos" ||
-                (categoria === "ofertas" && esOferta) ||
-                cat === categoria)
-                ? "block"
-                : "none";
+        p.style.display = (categoria === "todos" || (categoria === "ofertas" && esOferta) || cat === categoria) ? "block" : "none";
     });
 }
 
 // ========================
-// FINALIZAR PEDIDO
+// FINALIZAR PEDIDO (ARREGLADO PARA WHATSAPP Y CONTADOR)
 // ========================
 
 function obtenerNumeroPedido() {
-    // 1. Obtenemos el contador total (o empezamos en 0)
     let contadorTotal = parseInt(localStorage.getItem("contador_pedidos_total")) || 0;
-    
-    // 2. Incrementamos
     contadorTotal++;
-    
-    // 3. Guardamos para el próximo pedido
     localStorage.setItem("contador_pedidos_total", contadorTotal);
     
-    // 4. Formato 000-0000 (Ej: 1500 -> 000-1500 | 10500 -> 001-0500)
     const prefijo = Math.floor(contadorTotal / 10000);
     const sufijo = contadorTotal % 10000;
     
-    const parte1 = String(prefijo).padStart(3, "0");
-    const parte2 = String(sufijo).padStart(4, "0");
-    
-    return `${parte1}-${parte2}`;
+    return `${String(prefijo).padStart(3, "0")}-${String(sufijo).padStart(4, "0")}`;
+}
+
+function enviarPedidoWhatsApp() {
+    if (!carrito.length) return;
+
+    const direccionInput = document.getElementById("direccionModal");
+    const direccion = direccionInput.value.trim();
+    const errorDiv = document.getElementById("errorDireccion");
+
+    if (!direccion) {
+        errorDiv.classList.remove("d-none");
+        direccionInput.focus();
+        return;
+    }
+
+    errorDiv.classList.add("d-none");
+
+    const btnEnviar = document.querySelector(".btn-success-pedido");
+    if (btnEnviar) {
+        btnEnviar.disabled = true;
+        btnEnviar.innerHTML = "Procesando...";
+    }
+
+    const numeroPedido = obtenerNumeroPedido();
+    const fechaPedido = obtenerFechaPedido();
+    const aliasMP = "walter30mp";
+    const linkPago = `https://www.mercadopago.com.ar/home?alias=${aliasMP}`;
+
+    let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
+    msg += `📅 ${fechaPedido}\n`;
+    msg += `--------------------------\n`;
+    carrito.forEach(p => {
+        msg += `✅ ${p.cantidad}${p.unidad} - ${p.nombre.toUpperCase()}\n`;
+    });
+    msg += `--------------------------\n`;
+    msg += `📍 *Dir:* ${direccion}\n`;
+    msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
+    msg += `💳 *Pagá con Mercado Pago:* ${linkPago}\n\n`;
+    msg += `🙏 ¡Gracias por tu compra!`;
+
+    const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
+
+    // Envío a Google Sheets en segundo plano (sin await para no bloquear la redirección)
+    fetch(URL_SHEETS, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            pedido: numeroPedido,
+            fecha: fechaPedido,
+            productos: carrito.map(p => `${p.cantidad}${p.unidad} ${p.nombre}`).join("\n"),
+            total: total.toFixed(2),
+            direccion: direccion,
+        })
+    });
+
+    // Redirección directa según dispositivo para evitar bloqueos
+    const esMovil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (esMovil) {
+        window.location.href = whatsappUrl;
+    } else {
+        window.open(whatsappUrl, "_blank");
+    }
+
+    // Limpieza de interfaz diferida
+    setTimeout(() => {
+        carrito = [];
+        actualizarCarrito();
+        if (btnEnviar) {
+            btnEnviar.disabled = false;
+            btnEnviar.innerText = "Enviar Pedido";
+        }
+        const modalElt = document.getElementById('modalCarrito');
+        if(modalElt){
+            const modalInst = bootstrap.Modal.getInstance(modalElt);
+            if(modalInst) modalInst.hide();
+        }
+    }, 800);
 }
 
 function cerrarMenuMobile() {
     const menu = document.getElementById("menuNav");
     const bsCollapse = bootstrap.Collapse.getInstance(menu);
     if (bsCollapse) bsCollapse.hide();
-}
-
-// ========================
-// UTILIDADES
-// ========================
-function obtenerNumeroPedido() {
-    // 1. Obtenemos el contador total almacenado (o empezamos en 0)
-    let contadorTotal = parseInt(localStorage.getItem("contador_pedidos_total")) || 0;
-    
-    // 2. Incrementamos para el nuevo pedido
-    contadorTotal++;
-    
-    // 3. Guardamos el nuevo total para la próxima vez
-    localStorage.setItem("contador_pedidos_total", contadorTotal);
-    
-    // 4. Lógica de formato 000-0000
-    // El prefijo (primeros 3 dígitos) es el total dividido 10000
-    // El sufijo (últimos 4 dígitos) es el resto de esa división
-    const prefijo = Math.floor(contadorTotal / 10000);
-    const sufijo = contadorTotal % 10000;
-    
-    // 5. Formateamos con ceros a la izquierda
-    const parte1 = String(prefijo).padStart(3, "0");
-    const parte2 = String(sufijo).padStart(4, "0");
-    
-    return `${parte1}-${parte2}`;
 }
 
 function obtenerFechaPedido() {
