@@ -113,22 +113,58 @@ body {
 
 #carritoFlotante {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
+  bottom: 25px;
+  right: 25px;
+  width: 70px;  /* Aumentamos un poco el tamaño del círculo base */
+  height: 70px;
   border-radius: 50%;
   z-index: 1050;
-  font-size: 24px;
+  display: flex;
+  align-items: center;    
+  justify-content: center; 
+  border: none;
+  background-color: #f7d957; 
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  padding: 0;
+}
+
+/* EL CONTADOR (CIRCULO ROJO) */
+#contadorCarrito {
+  position: absolute;
+  /* Posicionamiento arriba a la derecha */
+  top: 5px;
+  right: 5px;
+  
+  background-color: #dc3545;
+  color: white;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  
+  /* Centrado del número dentro del círculo rojo */
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  background-color: #198754;
-  color: white;
-  touch-action: manipulation;
+  
+  font-size: 12px;
+  font-weight: bold;
+  border: 2px solid white; /* Borde blanco para que resalte */
+  
+  /* EL TRUCO: Mueve el contador un poco hacia afuera del círculo */
+  transform: translate(30%, -30%); 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
+/* Animación cuando cambia el número */
+.btn-pop {
+  animation: bounce 0.3s ease;
+}
+
+@keyframes bounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
 /* =========================================
    MODAL (CARRITO) - CORRECCIÓN DE ANCHO
    ========================================= */
@@ -210,4 +246,18 @@ button,
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.4s ease;
+}
+
+.logo-marca {
+  height: 40px;      /* Ajusta esta altura según te guste */
+  width: auto;       /* Mantiene la proporción original */
+  object-fit: contain;
+  display: block;
+}
+
+/* En pantallas más grandes puedes hacerlo un poco más grande si quieres */
+@media (min-width: 992px) {
+  .logo-marca {
+    height: 50px;
+  }
 }
