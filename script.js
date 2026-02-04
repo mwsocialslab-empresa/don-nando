@@ -1,4 +1,4 @@
-const URL_SHEETS = "https://script.google.com/macros/s/AKfycbx1xQq6B54oWoKDnE36gi7ATNEODIsjoX69YdmmjUcOF3HU2lvbQlLK3BX450r7KsrdfQ/exec";
+const URL_SHEETS = "https://script.google.com/macros/s/AKfycbyRbAiuDMfdyiASwWra6Zgm-_4zCeYuhyAhreXtZTdqxHeoqOmyZL08ySEAz-BInPNt/exec";
 
 let carrito = [];
 let productos = [];
@@ -198,7 +198,7 @@ function filtrar(categoria) {
 // FINALIZAR PEDIDO
 // ========================
 
-function enviarPedidoWhatsApp() {
+async function enviarPedidoWhatsApp() {
   if (!carrito.length) return;
 
   const direccionInput = document.getElementById("direccionModal");
@@ -213,51 +213,59 @@ function enviarPedidoWhatsApp() {
 
   errorDiv.classList.add("d-none");
 
+  // Bloquear el botón para evitar múltiples clics
+  const btnEnviar = document.querySelector(".btn-success-pedido"); // Asegúrate de que este sea el selector de tu botón
+  if(btnEnviar) btnEnviar.disabled = true;
+
   const numeroPedido = obtenerNumeroPedido();
   const fechaPedido = obtenerFechaPedido();
-
-  // 🔗 LINK DE PAGO (alias Mercado Pago)
   const aliasMP = "walter30mp";
   const linkPago = `https://www.mercadopago.com.ar/home?alias=${aliasMP}`;
 
+  // 1. Preparamos el mensaje para WhatsApp
   let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
   msg += `📅 ${fechaPedido}\n`;
   msg += `--------------------------\n`;
-
   carrito.forEach(p => {
     msg += `✅ ${p.cantidad}${p.unidad} - ${p.nombre.toUpperCase()}\n`;
   });
-
   msg += `--------------------------\n`;
   msg += `📍 *Dir:* ${direccion}\n`;
   msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
-
-  msg += `💳 *Pagá con Mercado Pago desde este link:*\n`;
-  msg += `👉 ${linkPago}\n\n`;
-  msg += `📎 Luego enviá el comprobante por este chat.\n`;
+  msg += `💳 *Pagá con Mercado Pago:* ${linkPago}\n\n`;
   msg += `🙏 ¡Gracias por tu compra!`;
 
-  fetch(URL_SHEETS, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    pedido: numeroPedido,
-    fecha: fechaPedido,
-    productos: carrito.map(p =>
-      `${p.cantidad}${p.unidad} ${p.nombre}`
-    ).join(" | "),
-    total: total.toFixed(2),
-    direccion: direccion,
-    telefono: "" // si después lo pedís, acá va
-  })
-});
+  // 2. ENVIAR A GOOGLE SHEETS PRIMERO
+  try {
+    const response = await fetch(URL_SHEETS, {
+      method: "POST",
+      mode: "no-cors", // Importante: Apps Script no maneja bien CORS de forma nativa
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        pedido: numeroPedido,
+        fecha: fechaPedido,
+        // CAMBIA ESTA LÍNEA:
+        productos: carrito.map(p => `${p.cantidad}${p.unidad} ${p.nombre}`).join("\n"), 
+        total: total.toFixed(2),
+        direccion: direccion,
+      })
+    });
 
-  window.open(
-    `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`,
-    "_blank"
-  );
+    // 3. UNA VEZ ENVIADO (o intentado), ABRIR WHATSAPP
+    const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
+    window.open(whatsappUrl, "_blank");
+    
+    // Opcional: Limpiar carrito y cerrar modal después de la compra
+    carrito = [];
+    actualizarCarrito();
+    alert("¡Pedido registrado con éxito!");
+
+  } catch (error) {
+    console.error("Error al guardar en Sheets:", error);
+    alert("Hubo un problema al guardar el pedido, pero puedes enviarlo por WhatsApp.");
+  } finally {
+    if(btnEnviar) btnEnviar.disabled = false;
+  }
 }
 
 function cerrarMenuMobile() {
