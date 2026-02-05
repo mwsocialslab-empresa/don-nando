@@ -179,6 +179,18 @@ function actualizarCarrito() {
             c.style.display = items > 0 ? "inline-block" : "none";
         }
     });
+
+    // --- BLOQUEO VISUAL POR MONTO MÍNIMO ---
+    const btnEnviar = document.querySelector(".btn-success-pedido");
+    if (btnEnviar) {
+        if (total > 0 && total < 45000) {
+            btnEnviar.style.opacity = '0.6';
+            btnEnviar.innerText = 'Mínimo de envío $45.000';
+        } else {
+            btnEnviar.style.opacity = '1';
+            btnEnviar.innerText = 'Confirmar y enviar pedido';
+        }
+    }
 }
 
 function eliminar(i) {
@@ -187,15 +199,13 @@ function eliminar(i) {
 }
 
 function vaciarCarrito() {
-    // Eliminamos el 'if (confirm(...))' para que sea directo
     carrito = [];
     actualizarCarrito();
-    
-    // Opcional: Cerrar el modal automáticamente al vaciar
     const modalElt = document.getElementById('modalCarrito');
     const modalInst = bootstrap.Modal.getInstance(modalElt);
     if(modalInst) modalInst.hide();
 }
+
 function filtrar(categoria) {
     document.querySelectorAll(".producto").forEach(p => {
         const cat = p.dataset.categoria;
@@ -204,29 +214,26 @@ function filtrar(categoria) {
     });
 }
 
-// ========================
-// FINALIZAR PEDIDO (ARREGLADO PARA WHATSAPP Y CONTADOR)
-// ========================
-// ========================
-// CONTADOR FORMATO 000-0000
-// ========================
 function obtenerNumeroPedido() {
     let contadorTotal = parseInt(localStorage.getItem("contador_pedidos_total")) || 0;
     contadorTotal++;
     localStorage.setItem("contador_pedidos_total", contadorTotal);
-    
-    // Divide el número para crear el formato 000-0000
     const prefijo = Math.floor(contadorTotal / 10000);
     const sufijo = contadorTotal % 10000;
-    
     return `${String(prefijo).padStart(3, "0")}-${String(sufijo).padStart(4, "0")}`;
 }
 
 // ========================
-// FINALIZAR PEDIDO (OPTIMIZADO)
+// FINALIZAR PEDIDO (CON VALIDACIÓN DE $45.000)
 // ========================
 function enviarPedidoWhatsApp() {
     if (!carrito.length) return;
+
+    // VALIDACIÓN MONTO MÍNIMO
+    if (total < 45000) {
+        mostrarAlertMinimo();
+        return;
+    }
 
     const direccionInput = document.getElementById("direccionModal");
     const direccion = direccionInput.value.trim();
@@ -258,14 +265,14 @@ function enviarPedidoWhatsApp() {
         msg += `✅ ${p.cantidad}${p.unidad} - ${p.nombre.toUpperCase()}\n`;
     });
     msg += `--------------------------\n`;
-    msg += `📍 *Dir:* ${direccion}\n`;
+   msg += `📍 *Dir:* ${direccion}\n`;
     msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
     msg += `💳 *Pagá con Mercado Pago:* ${linkPago}\n\n`;
+    msg += `😎 *No olvides mandar el comprobante de MP*\n\n`;
     msg += `🙏 ¡Gracias por tu compra!`;
 
     const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
 
-    // 1. Guardar en Sheets (en segundo plano)
     fetch(URL_SHEETS, {
         method: "POST",
         mode: "no-cors",
@@ -279,105 +286,41 @@ function enviarPedidoWhatsApp() {
         })
     });
 
-    // 2. Redirección inmediata (Especial para evitar bloqueos en iPhone)
     window.location.href = whatsappUrl;
 
-    // 3. Limpieza de interfaz después de un momento
     setTimeout(() => {
         carrito = [];
         actualizarCarrito();
-        
         if (btnEnviar) {
             btnEnviar.disabled = false;
             btnEnviar.innerText = "Confirmar y enviar pedido";
         }
-
         const modalElt = document.getElementById('modalCarrito');
-        if (modalElt) {
-            const modalInst = bootstrap.Modal.getInstance(modalElt);
-            if (modalInst) modalInst.hide();
-        }
+        const modalInst = bootstrap.Modal.getInstance(modalElt);
+        if (modalInst) modalInst.hide();
     }, 1200);
 }
 
-// ========================
-// FINALIZAR PEDIDO (OPTIMIZADO iOS/ANDROID)
-// ========================
-function enviarPedidoWhatsApp() {
-    if (!carrito.length) return;
+function mostrarAlertMinimo() {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
 
-    const direccionInput = document.getElementById("direccionModal");
-    const direccion = direccionInput.value.trim();
-    const errorDiv = document.getElementById("errorDireccion");
+    const alertHtml = `
+      <div class="alert alert-danger alert-dismissible fade show shadow-lg" role="alert" style="border-radius: 15px; font-family: 'Roboto Condensed', sans-serif;">
+        <strong>⚠️ Monto insuficiente:</strong> El monto mínimo de envío es de $45.000.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    `;
+    
+    container.innerHTML = alertHtml;
 
-    if (!direccion) {
-        errorDiv.classList.remove("d-none");
-        direccionInput.focus();
-        return;
-    }
-
-    errorDiv.classList.add("d-none");
-
-    // Feedback visual en el botón
-    const btnEnviar = document.querySelector(".btn-success-pedido");
-    if (btnEnviar) {
-        btnEnviar.disabled = true;
-        btnEnviar.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Redirigiendo...';
-    }
-
-    const numeroPedido = obtenerNumeroPedido();
-    const fechaPedido = obtenerFechaPedido();
-    const aliasMP = "walter30mp";
-    const linkPago = `https://www.mercadopago.com.ar/home?alias=${aliasMP}`;
-
-    let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
-    msg += `📅 ${fechaPedido}\n`;
-    msg += `--------------------------\n`;
-    carrito.forEach(p => {
-        msg += `✅ ${p.cantidad}${p.unidad} - ${p.nombre.toUpperCase()}\n`;
-    });
-    msg += `--------------------------\n`;
-    msg += `📍 *Dir:* ${direccion}\n`;
-    msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
-    msg += `💳 *Pagá con Mercado Pago:* ${linkPago}\n\n`;
-    msg += `🙏 ¡Gracias por tu compra!`;
-
-    const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
-
-    // 1. Disparamos el guardado en Sheets (sin esperar)
-    fetch(URL_SHEETS, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            pedido: numeroPedido,
-            fecha: fechaPedido,
-            productos: carrito.map(p => `${p.cantidad}${p.unidad} ${p.nombre}`).join("\n"),
-            total: total.toFixed(2),
-            direccion: direccion,
-        })
-    });
-
-    // 2. Redirección inmediata
-    // En iPhone (como el de tu foto), window.location.href es lo que mejor funciona
-    // para que al darle a "Abrir" salte directo a la App.
-    window.location.href = whatsappUrl;
-
-    // 3. Limpieza de interfaz (con tiempo suficiente para que el usuario cambie de App)
     setTimeout(() => {
-        carrito = [];
-        actualizarCarrito();
-        
-        if (btnEnviar) {
-            btnEnviar.disabled = false;
-            btnEnviar.innerText = "Enviar Pedido";
-        }
-
-        // Cerramos el modal
-        const modalElt = document.getElementById('modalCarrito');
-        const modalInst = bootstrap.Modal.getInstance(modalElt);
-        if(modalInst) modalInst.hide();
-    }, 1000);
+      const alertElement = container.querySelector('.alert');
+      if (alertElement) {
+        const bsAlert = new bootstrap.Alert(alertElement);
+        bsAlert.close();
+      }
+    }, 6000);
 }
 
 function cerrarMenuMobile() {
@@ -396,5 +339,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const errorDiv = document.getElementById("errorDireccion");
     if (direccionInput && errorDiv) {
         direccionInput.addEventListener("input", () => errorDiv.classList.add("d-none"));
+    }
+});
+// Detectar el scroll para subir el carrito al llegar al fondo
+window.addEventListener("scroll", () => {
+    const carrito = document.getElementById("carritoFlotante");
+    if (!carrito) return;
+
+    // Calculamos la posición actual del scroll
+    const scrollPropio = window.innerHeight + window.scrollY;
+    const alturaTotal = document.documentElement.offsetHeight;
+
+    // Si estamos a menos de 50px del fondo, subimos el carrito
+    if (scrollPropio >= alturaTotal - 50) {
+        carrito.classList.add("carrito-subido");
+    } else {
+        carrito.classList.remove("carrito-subido");
     }
 });

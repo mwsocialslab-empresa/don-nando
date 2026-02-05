@@ -1,5 +1,4 @@
 /* Aplicar la fuente a absolutamente todo el sitio */
-/* Aplicar la fuente a absolutamente todo el sitio */
 * {
   font-family: 'Roboto Condensed', sans-serif !important;
 }
@@ -18,11 +17,12 @@ h1, h2, h3, h4, h5, h6, .navbar-brand, .fw-bold {
 p, span, .nav-link, label {
   font-weight: 400;
 }
+
 /* =========================================
    CONFIGURACIÓN GENERAL
    ========================================= */
 body {
-  font-family: 'Roboto Condensed', sans-serif; /* Nueva fuente aplicada */
+  font-family: 'Roboto Condensed', sans-serif; 
   background-color: #f8f9fa;
   margin: 0;
   overflow-x: hidden; 
@@ -106,7 +106,6 @@ body {
   align-items: center;
   justify-content: center;
   background: #f8f9fa;
-  /* Optimiza respuesta táctil */
   touch-action: manipulation; 
 }
 
@@ -132,9 +131,9 @@ body {
 
 #carritoFlotante {
   position: fixed;
-  bottom: 25px;
+  bottom: 25px; /* Ajustado para que inicie abajo */
   right: 25px;
-  width: 70px;  /* Aumentamos un poco el tamaño del círculo base */
+  width: 70px;  
   height: 70px;
   border-radius: 50%;
   z-index: 1050;
@@ -145,31 +144,30 @@ body {
   background-color: #f7d957; 
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   padding: 0;
+  transition: bottom 0.3s ease; /* Movimiento suave */
+}
+
+/* Clase que se activará al llegar al fondo */
+.carrito-subido {
+  bottom: 100px !important;
 }
 
 /* EL CONTADOR (CIRCULO ROJO) */
 #contadorCarrito {
   position: absolute;
-  /* Posicionamiento arriba a la derecha */
   top: 5px;
   right: 5px;
-  
   background-color: #dc3545;
   color: white;
   min-width: 32px;
   height: 32px;
   border-radius: 50%;
-  
-  /* Centrado del número dentro del círculo rojo */
   display: flex;
   align-items: center;
   justify-content: center;
-  
   font-size: 12px;
   font-weight: bold;
-  border: 2px solid white; /* Borde blanco para que resalte */
-  
-  /* EL TRUCO: Mueve el contador un poco hacia afuera del círculo */
+  border: 2px solid white; 
   transform: translate(30%, -30%); 
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
@@ -184,6 +182,7 @@ body {
   50% { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
+
 /* =========================================
    MODAL (CARRITO) - CORRECCIÓN DE ANCHO
    ========================================= */
@@ -198,17 +197,16 @@ body {
   margin-bottom: 15px;
 }
 
-/* Ajustes para móviles: Carrito Ancho Completo */
 @media (max-width: 576px) {
   .modal-dialog {
-    margin: 0.5rem; /* Margen pequeño en bordes */
+    margin: 0.5rem; 
     display: flex;
     align-items: center;
     min-height: calc(100% - 1rem);
   }
 
   .modal-content {
-    width: 100% !important; /* Fuerza el ancho total de la pantalla */
+    width: 100% !important; 
     margin: 0 auto;
   }
 
@@ -247,15 +245,10 @@ body {
   color: white;
 }
 
-/* Bloqueo global de zoom por doble toque en botones */
-button, 
-.btn, 
-.input-group button,
-.nav-link {
+button, .btn, .input-group button, .nav-link {
     touch-action: manipulation;
 }
 
-/* Animaciones */
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(100%); }
   to { opacity: 1; transform: translateY(0); }
@@ -268,18 +261,23 @@ button,
 }
 
 .logo-marca {
-  height: 55px;      /* Ajusta esta altura según te guste */
-  width: auto;       /* Mantiene la proporción original */
+  height: 55px;      
+  width: auto;       
   object-fit: contain;
   display: block;
 }
 
-/* En pantallas más grandes puedes hacerlo un poco más grande si quieres */
 @media (min-width: 992px) {
   .logo-marca {
     height: 50px;
   }
 }
-.marca{
+
+.marca {
   font-size: 1.8rem;
+}
+
+.envio {
+  font-size: 0.9rem;
+  color: #ffee00;
 }
