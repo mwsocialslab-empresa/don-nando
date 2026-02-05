@@ -255,8 +255,10 @@ function enviarPedidoWhatsApp() {
 
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
-    const aliasMP = "walter30mp";
-    const linkPago = `https://link.mercadopago.com.ar/${aliasMP}`;
+    const cvuMP = "0000003100047275611542"; // Tu CVU de la imagen
+  const aliasMP = "walter30mp";
+  // Este link abre la sección de transferencia pesada y segura
+  const linkPago = `https://www.mercadopago.com.ar/pagar/transferir?cvu=${cvuMP}`;
 
     let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
     msg += `📅 ${fechaPedido}\n`;
