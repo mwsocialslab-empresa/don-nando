@@ -149,7 +149,7 @@ body {
 
 /* Clase que se activará al llegar al fondo */
 .carrito-subido {
-  bottom: 100px !important;
+  bottom: 105px !important;
 }
 
 /* EL CONTADOR (CIRCULO ROJO) */
