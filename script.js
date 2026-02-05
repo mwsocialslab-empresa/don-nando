@@ -256,11 +256,10 @@ function enviarPedidoWhatsApp() {
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
     const aliasMP = "walter30mp";
-    const cvuMP = "0000003100047275611542";
-    
+
     // Este link intenta forzar la apertura de la APP de Mercado Pago directamente
     const linkApp = "/link.mercadopago.com.ar/home"; 
-    // Link de respaldo web simple
+
  
 
     let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
@@ -273,15 +272,13 @@ function enviarPedidoWhatsApp() {
     msg += `📍 *Direc:* ${direccion}\n`;
     msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
     
-    msg += `💳 *PAGÁ CON MERCADO PAGO:*\n`;
+    msg += `🤝 *MERCADO PAGO:*\n`;
     msg += `📲 *TOCÁ EN "INICIAR SESIÓN"*\n`;
-    msg += `1. Tocá aquí para abrir tu App: ${linkApp}\n`;
+    msg += `👇 App: ${linkApp}\n`;
     //msg += `2. O usá este link: ${linkWeb}\n\n`;
-    
-    msg += `*Datos para Transferir (Copiá y Pegá):*\n`;
+ 
     msg += `👉 *Alias:* ${aliasMP}\n`;
-    msg += `👉 *CVU:* ${cvuMP}\n\n`;
-    
+   
     msg += `😎 *No olvides mandar el comprobante de pago*\n\n`;
     msg += `🙏 ¡Muchas gracias por tu compra!`;
 
