@@ -381,20 +381,22 @@ const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 const body = document.body;
 
-// Revisar si ya tenía el modo oscuro guardado
-if (localStorage.getItem('dark-mode') === 'enabled') {
-    body.classList.add('dark-mode');
-    themeIcon.innerText = '☀️';
+// modo oscuro
+function setTheme(modo) {
+    const body = document.body;
+    
+    if (modo === 'oscuro') {
+        body.classList.add('dark-mode');
+        localStorage.setItem('tema-don-nando', 'oscuro');
+    } else {
+        body.classList.remove('dark-mode');
+        localStorage.setItem('tema-don-nando', 'claro');
+    }
 }
 
-themeToggle.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-    
-    if (body.classList.contains('dark-mode')) {
-        themeIcon.innerText = '☀️'; // Sol para volver al claro
-        localStorage.setItem('dark-mode', 'enabled');
-    } else {
-        themeIcon.innerText = '🌙'; // Luna para volver al oscuro
-        localStorage.setItem('dark-mode', 'disabled');
+// Al cargar la página, verificamos si ya había elegido un modo
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem('tema-don-nando') === 'oscuro') {
+        document.body.classList.add('dark-mode');
     }
 });

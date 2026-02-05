@@ -294,33 +294,23 @@ button, .btn, .input-group button, .nav-link {
   pointer-events: auto; /* Esto permite tocar el botón de cerrar */
 }
 /* Colores Modo Oscuro */
+/* Estilos para el modo oscuro */
 body.dark-mode {
-    background-color: #121212;
-    color: #ffffff;
+    background-color: #1a1a1a !important;
+    color: #f8f9fa !important;
 }
 
 .dark-mode .card {
-    background-color: #1e1e1e;
-    color: #ffffff;
-    border: 1px solid #333;
+    background-color: #2d2d2d !important;
+    color: white !important;
+    border-color: #444 !important;
 }
 
 .dark-mode .card-body h6 {
-    color: #ffffff !important;
+    color: #ffc107 !important; /* El nombre del producto en amarillo resalta más */
 }
 
-/* Botón Flotante para el Modo */
-#theme-toggle {
-    position: fixed;
-    top: 15px;
-    right: 70px; /* Al lado del menú */
-    z-index: 1001;
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+/* Para que el grupo de botones no quede pegado al borde */
+.theme-switch-group {
+    margin: 10px;
 }
