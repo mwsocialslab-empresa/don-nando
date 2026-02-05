@@ -305,15 +305,26 @@ function mostrarAlertMinimo() {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
+    // Usamos 'w-100' y posicionamiento fijo para que cruce toda la pantalla
     const alertHtml = `
-      <div class="alert alert-danger alert-dismissible fade show shadow-lg" role="alert" style="border-radius: 15px; font-family: 'Roboto Condensed', sans-serif;">
-        <strong>⚠️ Monto insuficiente:</strong> El monto mínimo de envío es de $45.000.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <div class="fixed-bottom w-100 p-3" style="z-index: 2000;">
+        <div class="alert alert-danger alert-dismissible fade show shadow-lg mb-0" role="alert" 
+             style="border-radius: 15px; font-family: 'Roboto Condensed', sans-serif; width: 100%;">
+          <div class="d-flex align-items-center">
+            <span class="fs-3 me-3">⚠️</span>
+            <div>
+              <strong>Monto insuficiente:</strong><br>
+              El monto mínimo de envío es de $45.000.
+            </div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
       </div>
     `;
     
     container.innerHTML = alertHtml;
 
+    // Se mantiene el cierre automático en 6 segundos
     setTimeout(() => {
       const alertElement = container.querySelector('.alert');
       if (alertElement) {
