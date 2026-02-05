@@ -305,26 +305,26 @@ function mostrarAlertMinimo() {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
-    // Usamos 'w-100' y posicionamiento fijo para que cruce toda la pantalla
+    // Eliminamos el padding (p-3) para que toque los bordes
     const alertHtml = `
-      <div class="fixed-bottom w-100 p-3" style="z-index: 2000;">
+      <div class="fixed-bottom w-100" style="z-index: 2000; padding: 0;">
         <div class="alert alert-danger alert-dismissible fade show shadow-lg mb-0" role="alert" 
-             style="border-radius: 15px; font-family: 'Roboto Condensed', sans-serif; width: 100%;">
-          <div class="d-flex align-items-center">
-            <span class="fs-3 me-3">⚠️</span>
-            <div>
-              <strong>Monto insuficiente:</strong><br>
-              El monto mínimo de envío es de $45.000.
+             style="border-radius: 0; font-family: 'Roboto Condensed', sans-serif; width: 100%; border: none;">
+          <div class="d-flex align-items-center p-3">
+            <span class="fs-1 me-3">⚠️</span>
+            <div style="font-size: 1.1rem;">
+              <strong style="text-transform: uppercase;">Monto insuficiente</strong><br>
+              El envío mínimo es de <b>$45.000</b>. ¡Agregá algo más!
             </div>
           </div>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="top: 50%; transform: translateY(-50%);"></button>
         </div>
       </div>
     `;
     
     container.innerHTML = alertHtml;
 
-    // Se mantiene el cierre automático en 6 segundos
+    // Se mantiene el cierre en 6 segundos
     setTimeout(() => {
       const alertElement = container.querySelector('.alert');
       if (alertElement) {
