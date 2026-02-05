@@ -261,7 +261,7 @@ function enviarPedidoWhatsApp() {
     // Este link intenta forzar la apertura de la APP de Mercado Pago directamente
     const linkApp = "https://www.mercadopago.com.ar/home"; 
     // Link de respaldo web simple
-    const linkWeb = "https://www.mercadopago.com.ar/home";
+    //const linkWeb = "https://www.mercadopago.com.ar/home";
 
     let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
     msg += `📅 ${fechaPedido}\n`;
@@ -275,7 +275,7 @@ function enviarPedidoWhatsApp() {
     
     msg += `💳 *PAGAR AHORA:*\n`;
     msg += `1. Tocá aquí para abrir tu App: ${linkApp}\n`;
-    msg += `2. O usá este link: ${linkWeb}\n\n`;
+    //msg += `2. O usá este link: ${linkWeb}\n\n`;
     
     msg += `*Datos para Transferir (Copiá y Pegá):*\n`;
     msg += `👉 *Alias:* ${aliasMP}\n`;
