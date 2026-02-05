@@ -256,7 +256,7 @@ function enviarPedidoWhatsApp() {
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
     const aliasMP = "walter30mp";
-    const linkPago = `https://www.mercadopago.com.ar/home?alias=${aliasMP}`;
+    const linkPago = `https://link.mercadopago.com.ar/${aliasMP}`;
 
     let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
     msg += `📅 ${fechaPedido}\n`;
