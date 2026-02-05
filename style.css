@@ -293,3 +293,34 @@ button, .btn, .input-group button, .nav-link {
 #toast-container .alert {
   pointer-events: auto; /* Esto permite tocar el botón de cerrar */
 }
+/* Colores Modo Oscuro */
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.dark-mode .card {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #333;
+}
+
+.dark-mode .card-body h6 {
+    color: #ffffff !important;
+}
+
+/* Botón Flotante para el Modo */
+#theme-toggle {
+    position: fixed;
+    top: 15px;
+    right: 70px; /* Al lado del menú */
+    z-index: 1001;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}

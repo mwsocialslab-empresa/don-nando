@@ -10,7 +10,7 @@ let total = 0;
 
 const CACHE_KEY = 'cache_productos';
 const CACHE_TIME_KEY = 'cache_productos_fecha';
-const mediaHora = 30 * 60 * 1000;
+const mediaHora = 0;
 
 const cacheLocal = localStorage.getItem(CACHE_KEY);
 const ultimaCarga = localStorage.getItem(CACHE_TIME_KEY);
@@ -26,19 +26,15 @@ function cargarDesdeSheets() {
     fetch(URL_SHEETS)
         .then(r => r.json())
         .then(data => {
-            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-            localStorage.setItem(CACHE_TIME_KEY, Date.now());
+            // Cargamos los productos directamente sin guardar copias viejas
             renderizarProductos(data);
         })
-        .catch(() => {
-            if (cacheLocal) {
-                renderizarProductos(JSON.parse(cacheLocal));
-            } else {
-                document.getElementById("productos").innerHTML =
-                    `<div class="alert alert-danger mx-auto text-center">
-                      No se pudo cargar el catálogo. Reintenta más tarde.
-                    </div>`;
-            }
+        .catch(error => {
+            console.error("Error cargando Sheets:", error);
+            document.getElementById("productos").innerHTML =
+                `<div class="alert alert-danger mx-auto text-center">
+                  No se pudo cargar el catálogo. Por favor, refrescá la página.
+                </div>`;
         });
 }
 
@@ -50,6 +46,7 @@ function renderizarProductos(data) {
 
     for (const categoria in data) {
         data[categoria].forEach(p => {
+            if (!p.nombre || p.nombre.trim() === "") return;
             const precioOriginal = parseFloat(String(p.precio).replace(',', '.'));
             const precioOferta = p.oferta ? parseFloat(String(p.oferta).replace(',', '.')) : 0;
             const precioFinal = precioOferta > 0 ? precioOferta : precioOriginal;
@@ -378,5 +375,26 @@ window.addEventListener("scroll", () => {
         carrito.classList.add("carrito-subido");
     } else {
         carrito.classList.remove("carrito-subido");
+    }
+});
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = document.getElementById('theme-icon');
+const body = document.body;
+
+// Revisar si ya tenía el modo oscuro guardado
+if (localStorage.getItem('dark-mode') === 'enabled') {
+    body.classList.add('dark-mode');
+    themeIcon.innerText = '☀️';
+}
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    
+    if (body.classList.contains('dark-mode')) {
+        themeIcon.innerText = '☀️'; // Sol para volver al claro
+        localStorage.setItem('dark-mode', 'enabled');
+    } else {
+        themeIcon.innerText = '🌙'; // Luna para volver al oscuro
+        localStorage.setItem('dark-mode', 'disabled');
     }
 });
