@@ -305,26 +305,27 @@ function mostrarAlertMinimo() {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
-    // Eliminamos el padding (p-3) para que toque los bordes
+    // Usamos mx-auto y un ancho del 92% para que parezca una tarjeta centrada
     const alertHtml = `
-      <div class="fixed-bottom w-100" style="z-index: 2000; padding: 0;">
+      <div class="fixed-bottom d-flex justify-content-center pb-4" style="z-index: 2000;">
         <div class="alert alert-danger alert-dismissible fade show shadow-lg mb-0" role="alert" 
-             style="border-radius: 0; font-family: 'Roboto Condensed', sans-serif; width: 100%; border: none;">
-          <div class="d-flex align-items-center p-3">
-            <span class="fs-1 me-3">⚠️</span>
-            <div style="font-size: 1.1rem;">
-              <strong style="text-transform: uppercase;">Monto insuficiente</strong><br>
-              El envío mínimo es de <b>$45.000</b>. ¡Agregá algo más!
+             style="border-radius: 20px; font-family: 'Roboto Condensed', sans-serif; width: 92%; border: 2px solid #f5c2c7;">
+          <div class="d-flex align-items-center p-2">
+            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width: 45px; height: 45px;">
+              <span style="font-size: 1.5rem;">⚠️</span>
+            </div>
+            <div style="font-size: 1.05rem;">
+              <strong style="text-transform: uppercase; color: #842029;">Monto insuficiente</strong><br>
+              El envío mínimo es de <b>$45.000</b>.
             </div>
           </div>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="top: 50%; transform: translateY(-50%);"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="top: 50%; transform: translateY(-50%); right: 10px;"></button>
         </div>
       </div>
     `;
     
     container.innerHTML = alertHtml;
 
-    // Se mantiene el cierre en 6 segundos
     setTimeout(() => {
       const alertElement = container.querySelector('.alert');
       if (alertElement) {

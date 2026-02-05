@@ -286,10 +286,10 @@ button, .btn, .input-group button, .nav-link {
   bottom: 0;
   left: 0;
   width: 100%;
+  pointer-events: none; /* Esto permite que puedas tocar lo que hay detrás si no hay alerta */
   z-index: 2000;
-  pointer-events: none; /* Permite cliquear lo que está atrás si no hay alerta */
 }
 
 #toast-container .alert {
-  pointer-events: auto; /* Permite cliquear el botón de cerrar de la alerta */
+  pointer-events: auto; /* Esto permite tocar el botón de cerrar */
 }
