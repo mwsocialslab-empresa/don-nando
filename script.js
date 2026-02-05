@@ -255,10 +255,11 @@ function enviarPedidoWhatsApp() {
 
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
-    const cvuMP = "0000003100047275611542"; // Tu CVU de la imagen
-  const aliasMP = "walter30mp";
-  // Este link abre la sección de transferencia pesada y segura
-  const linkPago = `https://www.mercadopago.com.ar/pagar/transferir?cvu=${cvuMP}`;
+    const aliasMP = "walter30mp";
+    const cvuMP = "0000003100047275611542"; // Según tu captura de pantalla
+    
+    // Link genérico de transferencia que no da error de servidor
+    const linkPago = "https://www.mercadopago.com.ar/pagar/transferir";
 
     let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
     msg += `📅 ${fechaPedido}\n`;
@@ -267,11 +268,13 @@ function enviarPedidoWhatsApp() {
         msg += `✅ ${p.cantidad}${p.unidad} - ${p.nombre.toUpperCase()}\n`;
     });
     msg += `--------------------------\n`;
-   msg += `📍 *Dir:* ${direccion}\n`;
+    msg += `📍 *Direc:* ${direccion}\n`;
     msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
-    msg += `💳 *Pagá con Mercado Pago:* ${linkPago}\n\n`;
-    msg += `😎 *No olvides mandar el comprobante de MP*\n\n`;
-    msg += `🙏 ¡Gracias por tu compra!`;
+    msg += `💳 *Pagar por Mercado Pago:* \n${linkPago}\n\n`;
+    msg += `👉 *Alias:* ${aliasMP}\n`;
+    msg += `👉 *CVU:* ${cvuMP}\n\n`;
+    msg += `😎 *No olvides mandar el comprobante de pago*\n\n`;
+    msg += `🙏 ¡Muchas gracias por tu compra!`;
 
     const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
 
