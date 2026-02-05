@@ -255,11 +255,11 @@ function enviarPedidoWhatsApp() {
 
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
-    const aliasMP = "walter30mp";
-    const cvuMP = "0000003100047275611542"; // Según tu captura de pantalla
+  const aliasMP = "walter30mp";
+    const cvuMP = "0000003100047275611542";
     
-    // Link genérico de transferencia que no da error de servidor
-    const linkPago = "https://www.mercadopago.com.ar/pagar/transferir";
+    // Cambiamos a este link que NO da error 111 porque es la ruta base de pagos
+    const linkPago = "https://www.mercadopago.com.ar/pagar";
 
     let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
     msg += `📅 ${fechaPedido}\n`;
@@ -270,9 +270,14 @@ function enviarPedidoWhatsApp() {
     msg += `--------------------------\n`;
     msg += `📍 *Direc:* ${direccion}\n`;
     msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
-    msg += `💳 *Pagar por Mercado Pago:* \n${linkPago}\n\n`;
+    
+    msg += `💳 *MÉTODO DE PAGO*:\n`;
+    msg += `Abrí tu App de Mercado Pago aquí:\n${linkPago}\n\n`;
+    
+    msg += `*Datos para transferir:*\n`;
     msg += `👉 *Alias:* ${aliasMP}\n`;
     msg += `👉 *CVU:* ${cvuMP}\n\n`;
+    
     msg += `😎 *No olvides mandar el comprobante de pago*\n\n`;
     msg += `🙏 ¡Muchas gracias por tu compra!`;
 
