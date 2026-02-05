@@ -259,7 +259,7 @@ function enviarPedidoWhatsApp() {
     const cvuMP = "0000003100047275611542";
     
     // Este link intenta forzar la apertura de la APP de Mercado Pago directamente
-    const linkApp = "link.mercadopago.com.ar/walter30000"; 
+    const linkApp = "link.mercadopago.com.ar"; 
     // Link de respaldo web simple
     //const linkWeb = "https://www.mercadopago.com.ar/home";
 
