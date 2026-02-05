@@ -273,7 +273,8 @@ function enviarPedidoWhatsApp() {
     msg += `📍 *Direc:* ${direccion}\n`;
     msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
     
-    msg += `💳 *PAGAR AHORA:*\n`;
+    msg += `💳 *PAGÁ CON MERCADO PAGO:*\n`;
+    msg += `📲 *TOCÁ EN "INICIAR SESIÓN"*\n`;
     msg += `1. Tocá aquí para abrir tu App: ${linkApp}\n`;
     //msg += `2. O usá este link: ${linkWeb}\n\n`;
     
