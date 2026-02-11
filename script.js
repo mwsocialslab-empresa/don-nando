@@ -226,26 +226,16 @@ function obtenerNumeroPedido() {
 async function enviarPedidoWhatsApp() {
     if (!carrito.length) return;
 
-    // 1. OBTENER LOS CAMPOS DEL FORMULARIO
-    const nombreInput = document.getElementById("nombreCliente");
-    const telefonoInput = document.getElementById("telefonoCliente");
-    const direccionInput = document.getElementById("direccionModal");
+    const nombre = document.getElementById("nombreCliente").value.trim();
+    const telefono = document.getElementById("telefonoCliente").value.trim();
+    const direccion = document.getElementById("direccionModal").value.trim();
     const errorDiv = document.getElementById("errorDireccion");
 
-    const nombre = nombreInput.value.trim();
-    const telefono = telefonoInput.value.trim();
-    const direccion = direccionInput.value.trim();
-
-    // 2. VALIDACIÓN DE CAMPOS VACÍOS
     if (!nombre || !telefono || !direccion) {
-        if (errorDiv) {
-            errorDiv.innerHTML = "⚠️ Por favor, completa Nombre, Teléfono y Dirección.";
-            errorDiv.classList.remove("d-none");
-        }
+        if (errorDiv) errorDiv.classList.remove("d-none");
         return;
     }
 
-    // 3. VALIDACIÓN MONTO MÍNIMO (Don Nando)
     if (total < 45000) {
         mostrarAlertMinimo();
         return;
@@ -253,69 +243,75 @@ async function enviarPedidoWhatsApp() {
 
     if (errorDiv) errorDiv.classList.add("d-none");
 
-    // 4. ESTADO DE CARGA EN EL BOTÓN
     const btnEnviar = document.querySelector(".btn-success-pedido");
     if (btnEnviar) {
         btnEnviar.disabled = true;
-        btnEnviar.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Redirigiendo...';
+        btnEnviar.innerHTML = 'Redirigiendo...';
     }
 
-    // 5. DATOS DEL PEDIDO
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
     const aliasMP = "Alias-Ejemplo";
-    const linkApp = "link.mercadopago.com.ar/home"; 
+    const linkApp = "link.mercadopago.com.ar/home";
 
-    // 6. CONSTRUCCIÓN DEL MENSAJE DE WHATSAPP
-    let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
-    msg += `📅 ${fechaPedido}\n\n`;
-    
-    msg += `👤 *CLIENTE:* ${nombre.toUpperCase()}\n`;
-    msg += `📞 *WHATSAPP:* ${telefono}\n`;
-    msg += `📍 *DIRECCIÓN:* ${direccion.toUpperCase()}\n`;
-    msg += `--------------------------\n`;
+    // DEFINICIÓN DE EMOJIS MEDIANTE CÓDIGOS DE ESCAPE (MÉTODO SEGURO)
+    const iconCarrito = "\uD83D\uDED2"; // 🛒
+    const iconCalendario = "\uD83D\uDCC5"; // 📅
+    const iconUsuario = "\uD83D\uDC64"; // 👤
+    const iconTel = "\uD83D\uDCDE"; // 📞
+    const iconPin = "\uD83D\uDCCD"; // 📍
+    const iconCheck = "\u2705"; // ✅
+    const iconBolsa = "\uD83D\uDCB0"; // 💰
+    const iconManos = "\uD83E\uDD1D"; // 🤝
+    const iconLentes = "\uD83D\uDE0E"; // 😎
+    const iconGracias = "\uD83D\uDE4F"; // 🙏
+
+    // CONSTRUCCIÓN DEL MENSAJE
+    let msg = iconCarrito + " *PEDIDO N\u00B0 " + numeroPedido + "*\n";
+    msg += iconCalendario + " " + fechaPedido + "\n\n";
+    msg += iconUsuario + " *CLIENTE:* " + nombre.toUpperCase() + "\n";
+    msg += iconTel + " *TEL:* " + telefono + "\n";
+    msg += iconPin + " *DIREC:* " + direccion.toUpperCase() + "\n";
+    msg += "--------------------------\n";
     
     carrito.forEach(p => {
-        msg += `✅ ${p.cantidad}${p.unidad || 'un'} - ${p.nombre.toUpperCase()}\n`;
+        msg += iconCheck + " " + p.cantidad + (p.unidad || 'un') + " - " + p.nombre.toUpperCase() + "\n";
     });
     
-    msg += `--------------------------\n`;
-    msg += `💰 *TOTAL A PAGAR:* $${total.toFixed(2)}\n\n`;
+    msg += "--------------------------\n";
+    msg += iconBolsa + " *TOTAL A PAGAR:* $" + total.toFixed(2) + "\n\n";
     
-    msg += `🤝 *MERCADO PAGO:*\n`;
-    msg += `📲 *TOCÁ EN "INICIAR SESIÓN"*\n`;
-    msg += `👇 App: ${linkApp}\n`;
-    msg += `👉 *Alias:* ${aliasMP}\n\n`;
-    msg += `😎 *No olvides mandar el comprobante de pago*\n\n`;
-    msg += `🙏 ¡Muchas gracias por tu compra!`;
+    msg += iconManos + " *MERCADO PAGO:*\n";
+    msg += "\uD83D\uDCF1 *TOC\u00C1 EN \"INICIAR SESI\u00D3N\"*\n";
+    msg += "\uD83D\uDC47 App: " + linkApp + "\n";
+    msg += "\uD83D\uDC49 *Alias:* " + aliasMP + "\n\n";
+    msg += iconLentes + " *No olvides mandar el comprobante*\n\n";
+    msg += iconGracias + " \u00A1Muchas gracias por tu compra!";
 
-    // 7. ENVÍO DE DATOS A GOOGLE SHEETS
-    try {
-        await fetch(URL_SHEETS, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                pedido: numeroPedido,
-                fecha: fechaPedido,
-                cliente: nombre,
-                telefono: telefono,
-                productos: carrito.map(p => `${p.cantidad}${p.unidad || 'un'} ${p.nombre}`).join("\n"),
-                total: total.toFixed(2),
-                direccion: direccion,
-            })
-        });
-    } catch (e) {
-        console.error("Error al guardar en Sheets", e);
-    }
+    // Codificación final para WhatsApp
+    const whatsappUrl = "https://wa.me/5491127461954?text=" + encodeURIComponent(msg);
 
-    // 8. REDIRECCIÓN A WHATSAPP
-    const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
+    // Envío a Sheets (No bloqueante)
+    fetch(URL_SHEETS, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            pedido: numeroPedido,
+            fecha: fechaPedido,
+            cliente: nombre,
+            telefono: telefono,
+            productos: carrito.map(p => p.cantidad + (p.unidad || 'un') + " " + p.nombre).join("\n"),
+            total: total.toFixed(2),
+            direccion: direccion,
+        })
+    }).catch(e => console.error("Error en Sheets:", e));
+
+    // Redirección
     window.location.href = whatsappUrl;
 
-    // 9. LIMPIEZA DEL CARRITO DESPUÉS DE UN TIEMPO
     setTimeout(() => {
-        vaciarCarrito(); // Esta función ya limpia el carrito y cierra el modal
+        if (typeof vaciarCarrito === "function") vaciarCarrito();
         if (btnEnviar) {
             btnEnviar.disabled = false;
             btnEnviar.innerText = "Confirmar y enviar pedido";
