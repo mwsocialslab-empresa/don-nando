@@ -223,7 +223,7 @@ function obtenerNumeroPedido() {
 // ========================
 // FINALIZAR PEDIDO (CON VALIDACIÓN DE $45.000)
 // ========================
-async function enviarPedidoWhatsApp() {
+function enviarPedidoWhatsApp() { // Le quité el async para evitar bloqueos de seguridad
     if (!carrito.length) return;
 
     const nombre = document.getElementById("nombreCliente").value.trim();
@@ -251,22 +251,21 @@ async function enviarPedidoWhatsApp() {
 
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
-    const aliasMP = "Alias-Ejemplo";
+    const aliasMP = "walter30mp";
     const linkApp = "link.mercadopago.com.ar/home";
 
-    // DEFINICIÓN DE EMOJIS MEDIANTE CÓDIGOS DE ESCAPE (MÉTODO SEGURO)
-    const iconCarrito = "\uD83D\uDED2"; // 🛒
-    const iconCalendario = "\uD83D\uDCC5"; // 📅
-    const iconUsuario = "\uD83D\uDC64"; // 👤
-    const iconTel = "\uD83D\uDCDE"; // 📞
-    const iconPin = "\uD83D\uDCCD"; // 📍
-    const iconCheck = "\u2705"; // ✅
-    const iconBolsa = "\uD83D\uDCB0"; // 💰
-    const iconManos = "\uD83E\uDD1D"; // 🤝
-    const iconLentes = "\uD83D\uDE0E"; // 😎
-    const iconGracias = "\uD83D\uDE4F"; // 🙏
+    // EMOJIS SEGUROS
+    const iconCarrito = "\uD83D\uDED2"; 
+    const iconCalendario = "\uD83D\uDCC5"; 
+    const iconUsuario = "\uD83D\uDC64"; 
+    const iconTel = "\uD83D\uDCDE"; 
+    const iconPin = "\uD83D\uDCCD"; 
+    const iconCheck = "\u2705"; 
+    const iconBolsa = "\uD83D\uDCB0"; 
+    const iconManos = "\uD83E\uDD1D"; 
+    const iconLentes = "\uD83D\uDE0E"; 
+    const iconGracias = "\uD83D\uDE4F"; 
 
-    // CONSTRUCCIÓN DEL MENSAJE
     let msg = iconCarrito + " *PEDIDO N\u00B0 " + numeroPedido + "*\n";
     msg += iconCalendario + " " + fechaPedido + "\n\n";
     msg += iconUsuario + " *CLIENTE:* " + nombre.toUpperCase() + "\n";
@@ -280,7 +279,6 @@ async function enviarPedidoWhatsApp() {
     
     msg += "--------------------------\n";
     msg += iconBolsa + " *TOTAL A PAGAR:* $" + total.toFixed(2) + "\n\n";
-    
     msg += iconManos + " *MERCADO PAGO:*\n";
     msg += "\uD83D\uDCF1 *TOC\u00C1 EN \"INICIAR SESI\u00D3N\"*\n";
     msg += "\uD83D\uDC47 App: " + linkApp + "\n";
@@ -288,10 +286,9 @@ async function enviarPedidoWhatsApp() {
     msg += iconLentes + " *No olvides mandar el comprobante*\n\n";
     msg += iconGracias + " \u00A1Muchas gracias por tu compra!";
 
-    // Codificación final para WhatsApp
     const whatsappUrl = "https://wa.me/5491127461954?text=" + encodeURIComponent(msg);
 
-    // Envío a Sheets (No bloqueante)
+    // 1. MANDAR A SHEETS (Sin esperar respuesta, para no frenar la redirección)
     fetch(URL_SHEETS, {
         method: "POST",
         mode: "no-cors",
@@ -305,18 +302,19 @@ async function enviarPedidoWhatsApp() {
             total: total.toFixed(2),
             direccion: direccion,
         })
-    }).catch(e => console.error("Error en Sheets:", e));
+    });
 
-    // Redirección
-    window.location.href = whatsappUrl;
+    // 2. REDIRECCIÓN INMEDIATA (Usamos window.open para saltar el bloqueo de iOS/Chrome)
+    window.open(whatsappUrl, '_blank');
 
+    // 3. LIMPIEZA POSTERIOR
     setTimeout(() => {
         if (typeof vaciarCarrito === "function") vaciarCarrito();
         if (btnEnviar) {
             btnEnviar.disabled = false;
             btnEnviar.innerText = "Confirmar y enviar pedido";
         }
-    }, 1500);
+    }, 1000);
 }
 
 function mostrarAlertMinimo() {
