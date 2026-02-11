@@ -223,90 +223,104 @@ function obtenerNumeroPedido() {
 // ========================
 // FINALIZAR PEDIDO (CON VALIDACIÓN DE $45.000)
 // ========================
-function enviarPedidoWhatsApp() {
+async function enviarPedidoWhatsApp() {
     if (!carrito.length) return;
 
-    // VALIDACIÓN MONTO MÍNIMO
+    // 1. OBTENER LOS CAMPOS DEL FORMULARIO
+    const nombreInput = document.getElementById("nombreCliente");
+    const telefonoInput = document.getElementById("telefonoCliente");
+    const direccionInput = document.getElementById("direccionModal");
+    const errorDiv = document.getElementById("errorDireccion");
+
+    const nombre = nombreInput.value.trim();
+    const telefono = telefonoInput.value.trim();
+    const direccion = direccionInput.value.trim();
+
+    // 2. VALIDACIÓN DE CAMPOS VACÍOS
+    if (!nombre || !telefono || !direccion) {
+        if (errorDiv) {
+            errorDiv.innerHTML = "⚠️ Por favor, completa Nombre, Teléfono y Dirección.";
+            errorDiv.classList.remove("d-none");
+        }
+        return;
+    }
+
+    // 3. VALIDACIÓN MONTO MÍNIMO (Don Nando)
     if (total < 45000) {
         mostrarAlertMinimo();
         return;
     }
 
-    const direccionInput = document.getElementById("direccionModal");
-    const direccion = direccionInput.value.trim();
-    const errorDiv = document.getElementById("errorDireccion");
+    if (errorDiv) errorDiv.classList.add("d-none");
 
-    if (!direccion) {
-        errorDiv.classList.remove("d-none");
-        direccionInput.focus();
-        return;
-    }
-
-    errorDiv.classList.add("d-none");
-
+    // 4. ESTADO DE CARGA EN EL BOTÓN
     const btnEnviar = document.querySelector(".btn-success-pedido");
     if (btnEnviar) {
         btnEnviar.disabled = true;
         btnEnviar.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Redirigiendo...';
     }
 
+    // 5. DATOS DEL PEDIDO
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
-    const aliasMP = "walter30mp";
+    const aliasMP = "Alias-Ejemplo";
+    const linkApp = "link.mercadopago.com.ar/home"; 
 
-    // Este link intenta forzar la apertura de la APP de Mercado Pago directamente
-    const linkApp = "/link.mercadopago.com.ar/home"; 
-
- 
-
+    // 6. CONSTRUCCIÓN DEL MENSAJE DE WHATSAPP
     let msg = `🛒 *PEDIDO N° ${numeroPedido}*\n`;
-    msg += `📅 ${fechaPedido}\n`;
+    msg += `📅 ${fechaPedido}\n\n`;
+    
+    msg += `👤 *CLIENTE:* ${nombre.toUpperCase()}\n`;
+    msg += `📞 *WHATSAPP:* ${telefono}\n`;
+    msg += `📍 *DIRECCIÓN:* ${direccion.toUpperCase()}\n`;
     msg += `--------------------------\n`;
+    
     carrito.forEach(p => {
-        msg += `✅ ${p.cantidad}${p.unidad} - ${p.nombre.toUpperCase()}\n`;
+        msg += `✅ ${p.cantidad}${p.unidad || 'un'} - ${p.nombre.toUpperCase()}\n`;
     });
+    
     msg += `--------------------------\n`;
-    msg += `📍 *Direc:* ${direccion}\n`;
-    msg += `💰 *Total a pagar:* $${total.toFixed(2)}\n\n`;
+    msg += `💰 *TOTAL A PAGAR:* $${total.toFixed(2)}\n\n`;
     
     msg += `🤝 *MERCADO PAGO:*\n`;
     msg += `📲 *TOCÁ EN "INICIAR SESIÓN"*\n`;
     msg += `👇 App: ${linkApp}\n`;
-    //msg += `2. O usá este link: ${linkWeb}\n\n`;
- 
-    msg += `👉 *Alias:* ${aliasMP}\n`;
-   
+    msg += `👉 *Alias:* ${aliasMP}\n\n`;
     msg += `😎 *No olvides mandar el comprobante de pago*\n\n`;
     msg += `🙏 ¡Muchas gracias por tu compra!`;
 
+    // 7. ENVÍO DE DATOS A GOOGLE SHEETS
+    try {
+        await fetch(URL_SHEETS, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                pedido: numeroPedido,
+                fecha: fechaPedido,
+                cliente: nombre,
+                telefono: telefono,
+                productos: carrito.map(p => `${p.cantidad}${p.unidad || 'un'} ${p.nombre}`).join("\n"),
+                total: total.toFixed(2),
+                direccion: direccion,
+            })
+        });
+    } catch (e) {
+        console.error("Error al guardar en Sheets", e);
+    }
+
+    // 8. REDIRECCIÓN A WHATSAPP
     const whatsappUrl = `https://wa.me/5491127461954?text=${encodeURIComponent(msg)}`;
-
-    fetch(URL_SHEETS, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            pedido: numeroPedido,
-            fecha: fechaPedido,
-            productos: carrito.map(p => `${p.cantidad}${p.unidad} ${p.nombre}`).join("\n"),
-            total: total.toFixed(2),
-            direccion: direccion,
-        })
-    });
-
     window.location.href = whatsappUrl;
 
+    // 9. LIMPIEZA DEL CARRITO DESPUÉS DE UN TIEMPO
     setTimeout(() => {
-        carrito = [];
-        actualizarCarrito();
+        vaciarCarrito(); // Esta función ya limpia el carrito y cierra el modal
         if (btnEnviar) {
             btnEnviar.disabled = false;
             btnEnviar.innerText = "Confirmar y enviar pedido";
         }
-        const modalElt = document.getElementById('modalCarrito');
-        const modalInst = bootstrap.Modal.getInstance(modalElt);
-        if (modalInst) modalInst.hide();
-    }, 1200);
+    }, 1500);
 }
 
 function mostrarAlertMinimo() {
@@ -400,3 +414,11 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.add('dark-mode');
     }
 });
+
+
+
+
+
+
+
+
