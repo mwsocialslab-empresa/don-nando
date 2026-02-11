@@ -251,7 +251,7 @@ function enviarPedidoWhatsApp() {
 
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
-    const aliasMP = "walter30mp";
+    const aliasMP = "Alias-Ejemplo";
     const linkApp = "/link.mercadopago.com.ar/home";
 
     // DEFINICIÓN DE EMOJIS MEDIANTE CÓDIGOS DE ESCAPE (MÉTODO SEGURO)
