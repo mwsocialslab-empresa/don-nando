@@ -274,3 +274,8 @@ button, .btn, .nav-link {
 .btn-whatsapp img {
     filter: brightness(0) invert(1); /* Opcional: pone el logo en blanco si prefieres */
 }
+.btn-whatsapp {
+    background-color: #25D366 !important;
+    color: white !important;
+    border: none;
+}
