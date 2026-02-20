@@ -71,23 +71,35 @@ p, span, .nav-link, label {
 }
 
 /* Scroll Horizontal de Categorías */
+
 .scroll-horizontal-nav {
-  display: flex;
-  overflow-x: auto;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Oculta en Firefox */
+    padding-left: 10px; /* Margen inicial para que no pegue al borde */
+    padding-right: 20px; /* Margen final para que la última palabra se vea cortada al inicio */
 }
 
 .scroll-horizontal-nav::-webkit-scrollbar {
   display: none; /* Chrome/Safari */
 }
+.scroll-horizontal-nav .nav {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.scroll-horizontal-nav .nav-item {
+    /* Esto asegura que los items no se achiquen y mantengan su tamaño natural */
+    flex: 0 0 auto; 
+}
 
 .scroll-horizontal-nav .nav-link {
-  color: #444 !important;
-  font-weight: 600;
-  font-size: 0.95rem;
-  padding: 8px 15px;
+    color: #444 !important;
+    font-weight: 600;
+    font-size: 1rem; /* Un poco más grande para facilitar el toque */
+    padding: 10px 15px; /* Espaciado interno equilibrado */
 }
 
 /* =========================================
@@ -225,8 +237,8 @@ body.dark-mode {
    6. RESPONSIVE / MEDIA QUERIES
    ========================================= */
 @media (max-width: 576px) {
-  .marca { font-size: 1.25rem; }
-  .logo-marca { max-height: 48px; }
+  .marca { font-size: 1.45rem; }
+  .logo-marca { max-height: 55px; }
   .modal-dialog { margin: 0.5rem; }
 }
 
