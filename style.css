@@ -279,3 +279,53 @@ button, .btn, .nav-link {
     color: white !important;
     border: none;
 }
+/* Ajustes específicos para Desktop (Pantallas grandes) */
+/* --- COMPORTAMIENTO DESKTOP --- */
+@media (min-width: 992px) {
+    .navbar .container {
+        flex-wrap: nowrap !important; /* Fuerza una sola línea */
+    }
+
+    .scroll-horizontal-nav {
+        overflow: visible !important; /* Quita el scroll en PC */
+        padding: 0;
+    }
+
+    .logo-marca {
+        max-height: 50px;
+    }
+
+    .marca {
+        font-size: 1.6rem;
+        white-space: nowrap;
+    }
+}
+
+/* --- COMPORTAMIENTO MÓVIL (Mantiene lo que funcionaba) --- */
+@media (max-width: 991px) {
+    .scroll-horizontal-nav {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 5px;
+    }
+    
+    .scroll-horizontal-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Centrado de logo y nombre en móvil si se desea, o mantener actual */
+    .marca {
+        font-size: 1.3rem;
+    }
+}
+
+/* Estilo general del botón carrito en Nav */
+.btn-cart-nav {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 5px 12px;
+}

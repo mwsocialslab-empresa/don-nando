@@ -22,28 +22,29 @@
 
 
 <nav class="navbar navbar-light bg-white sticky-top shadow-sm py-2">
-  <div class="container d-flex flex-column">
+  <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
     
-    <div class="row w-100 align-items-center mb-2 mx-0">
-      <div class="col-6 d-flex justify-content-center">
-        <img src="img/logo.jpeg" alt="Logo Don Nando" class="logo-marca">
-      </div>
-      <div class="col-6 d-flex justify-content-space-beteen">
-        <span class="marca color-marca">DON NANDO</span>
-      </div>
+    <div class="d-flex align-items-center mb-2 mb-lg-0">
+      <img src="img/logo.jpeg" alt="Logo Don Nando" class="logo-marca">
+      <span class="marca color-marca ms-2">DON NANDO</span>
     </div>
 
-    <div class="divisor-nav w-100 mb-2"></div>
-
-    <div class="w-100 overflow-auto scroll-horizontal-nav">
-      <ul class="nav nav-pills flex-nowrap white-space-nowrap pb-1">
-        <li class="nav-item"><a href="#" class="nav-link px-3" onclick="filtrar('todos'); return false;">Todos</a></li>
-        <li class="nav-item"><a href="#" class="nav-link px-3 text-danger fw-bold" onclick="filtrar('ofertas'); return false;">🔥 Ofertas</a></li>
-        <li class="nav-item"><a href="#" class="nav-link px-3" onclick="filtrar('carnes'); return false;">Carnes</a></li>
-        <li class="nav-item"><a href="#" class="nav-link px-3" onclick="filtrar('cerdo'); return false;">Cerdo</a></li>
-        <li class="nav-item"><a href="#" class="nav-link px-3" onclick="filtrar('pollo'); return false;">Pollo</a></li>
-        <li class="nav-item"><a href="#" class="nav-link px-3" onclick="filtrar('achuras'); return false;">Achuras</a></li>
+    <div class="w-100 w-lg-auto overflow-auto scroll-horizontal-nav mx-lg-auto justify-content-center ">
+      <ul class="nav nav-pills flex-nowrap white-space-nowrap justify-content-center">
+        <li class="nav-item"><a href="#" class="nav-link px-2 px-lg-3" onclick="filtrar('todos'); return false;">Todos</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2 px-lg-3 text-danger fw-bold" onclick="filtrar('ofertas'); return false;">🔥 Ofertas</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2 px-lg-3" onclick="filtrar('carnes'); return false;">Carnes</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2 px-lg-3" onclick="filtrar('cerdo'); return false;">Cerdo</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2 px-lg-3" onclick="filtrar('pollo'); return false;">Pollo</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2 px-lg-3" onclick="filtrar('achuras'); return false;">Achuras</a></li>
       </ul>
+    </div>
+
+    <div class="d-none d-lg-flex align-items-center ms-lg-3">
+      <button class="btn btn-cart-nav position-relative" data-bs-toggle="modal" data-bs-target="#modalCarrito">
+        <span class="fs-5">🛒</span>
+        <span id="contadorNav" class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle" style="display:none">0</span>
+      </button>
     </div>
   
   </div>
@@ -54,6 +55,29 @@
     <div class="text-center py-5">
       <div class="spinner-border text-success" role="status"></div>
       <p class="mt-2">Cargando productos...</p>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modalCerrado" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-white text-dark border-danger">
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title fw-bold" style="color: #800000;">🐂 DON NANDO</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <h4 class="mb-3 fw-bold">¡Local Cerrado!</h4>
+        <p>En este momento no estamos tomando pedidos online.</p>
+        <div class="rounded p-3 mt-3" style="background-color: #f8d7da; border: 1px solid #f5c2c7;">
+            <h6 class="fw-bold mb-2" style="color: #842029;">Nuestros horarios son:</h6>
+            <p class="mb-1">Lun a Jue: 15:00 a 00:00</p>
+            <p class="mb-1">Vie y Sáb: 15:00 a 01:00</p>
+            <p class="mb-0">Dom: 15:00 a 00:00</p>
+        </div>
+      </div>
+      <div class="modal-footer border-0 justify-content-center">
+        <button type="button" class="btn text-white fw-bold px-4" style="background-color: #800000;" data-bs-dismiss="modal">ENTENDIDO</button>
+      </div>
     </div>
   </div>
 </div>

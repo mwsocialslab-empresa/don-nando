@@ -1,5 +1,16 @@
 const URL_SHEETS = "https://script.google.com/macros/s/AKfycbyRbAiuDMfdyiASwWra6Zgm-_4zCeYuhyAhreXtZTdqxHeoqOmyZL08ySEAz-BInPNt/exec";
 
+const HORARIOS_ATENCION = {
+    1: { inicio: "15:00", fin: "23:59" }, // Lunes
+    2: { inicio: "15:00", fin: "23:59" }, // Martes
+    3: { inicio: "15:00", fin: "23:59" }, // Miércoles
+    4: { inicio: "15:00", fin: "23:59" }, // Jueves
+    5: { inicio: "17:00", fin: "01:00" }, // Viernes
+    6: { inicio: "15:00", fin: "01:00" }, // Sábado
+    0: { inicio: "15:00", fin: "23:59" }  // Domingo
+};
+
+
 let carrito = [];
 let productos = [];
 let total = 0;
@@ -224,6 +235,11 @@ function obtenerNumeroPedido() {
 // FINALIZAR PEDIDO (CON VALIDACIÓN DE $45.000)
 // ========================
 function enviarPedidoWhatsApp() {
+    if (!estaAbierto()) {
+        const modalCerrado = new bootstrap.Modal(document.getElementById('modalCerrado'));
+        modalCerrado.show();
+        return; // Detiene el envío
+    }
     if (!carrito.length) return;
 
     const nombre = document.getElementById("nombreCliente").value.trim();
@@ -305,7 +321,7 @@ function enviarPedidoWhatsApp() {
     });
 
     // REDIRECCIÓN DIRECTA
-    window.location.href = whatsappUrl;
+    window.open(whatsappUrl, '_blank');
 
     setTimeout(() => {
         if (typeof vaciarCarrito === "function") vaciarCarrito();
@@ -385,4 +401,34 @@ const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 const body = document.body;
 
+function estaAbierto() {
+    const ahora = new Date();
+    const dia = ahora.getDay();
+    const hActual = ahora.getHours() * 100 + ahora.getMinutes();
+    const h = HORARIOS_ATENCION[dia];
+    
+    if (!h) return false;
+    
+    const [hI, mI] = h.inicio.split(":").map(Number);
+    const [hF, mF] = h.fin.split(":").map(Number);
+    const inicio = hI * 100 + mI;
+    const fin = hF * 100 + mF;
+    
+    // Maneja horarios que cruzan la medianoche (como el 01:00 am)
+    return fin < inicio ? (hActual >= inicio || hActual <= fin) : (hActual >= inicio && hActual <= fin);
+}
 
+// EJECUCIÓN: Al cargar la web, si está cerrado, mostrar modal y bloquear botón
+document.addEventListener("DOMContentLoaded", () => {
+    if (!estaAbierto()) {
+        const modalCerrado = new bootstrap.Modal(document.getElementById('modalCerrado'));
+        modalCerrado.show();
+        
+        // Opcional: Deshabilitar el botón de enviar pedido si existe
+        const btnEnviar = document.querySelector(".btn-success-pedido");
+        if (btnEnviar) {
+            btnEnviar.disabled = true;
+            btnEnviar.innerText = "LOCAL CERRADO";
+        }
+    }
+});
