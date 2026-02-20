@@ -1,4 +1,4 @@
-const URL_SHEETS = "https://script.google.com/macros/s/AKfycbyRbAiuDMfdyiASwWra6Zgm-_4zCeYuhyAhreXtZTdqxHeoqOmyZL08ySEAz-BInPNt/exec";
+const URL_SHEETS = "https://script.google.com/macros/s/AKfycbzXqJ6OZYl1cZu4IpEUCtSly5Hnud01Hrl1FyIrBwscb2tfR7Tr73Vcj-L-YzQz2toh8Q/exec";
 
 const HORARIOS_ATENCION = {
     1: { inicio: "08:30", fin: "20:00" }, // Lunes
@@ -263,7 +263,7 @@ function enviarPedidoWhatsApp() {
 
     const numeroPedido = obtenerNumeroPedido();
     const fechaPedido = obtenerFechaPedido();
-    const aliasMP = "Alias-Ejemplo";
+    const aliasMP = "Frigo19";
     const linkApp = "/link.mercadopago.com.ar/home";
 
     let msg = "🛒 *PEDIDO N\u00B0 " + numeroPedido + "*\n";
@@ -280,10 +280,11 @@ function enviarPedidoWhatsApp() {
     msg += "--------------------------\n";
     msg += "💰 *TOTAL A PAGAR:* $" + total.toFixed(2) + "\n\n";
     msg += "🤝 *MERCADO PAGO:*\n";
-    msg += "👇 *Alias:* " + aliasMP + "\n\n";
+    msg += "👇 *Alias:* " + aliasMP + "\n";
+    msg += "👇 *Nombre: Eduardo Quiroga* " + "\n\n";
     msg += "🙏 ¡Muchas gracias!";
 
-    const whatsappUrl = "https://wa.me/5491127461954?text=" + encodeURIComponent(msg);
+    const whatsappUrl = "https://wa.me/5491135980370?text=" + encodeURIComponent(msg);
 
     // Registro en Sheets
     fetch(URL_SHEETS, {
