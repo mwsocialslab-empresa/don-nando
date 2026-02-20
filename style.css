@@ -30,7 +30,7 @@ body {
 
 /* Header Delgado */
 .main-header {
-  background: linear-gradient(135deg, #198754, #146c43);
+  background: linear-gradient(135deg, #800020);
   line-height: 1.2;
   height: 25px; 
   display: flex;
@@ -275,6 +275,7 @@ button, .btn, .input-group button, .nav-link {
 
 .marca {
   font-size: 1.8rem;
+  color: #800020;
 }
 
 .envio {
@@ -313,4 +314,61 @@ body.dark-mode {
 /* Para que el grupo de botones no quede pegado al borde */
 .theme-switch-group {
     margin: 10px;
+}
+/* Estilos para el scroll horizontal de categorías */
+.scroll-horizontal-nav {
+  -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+  scrollbar-width: none; /* Oculta scrollbar en Firefox */
+}
+
+.scroll-horizontal-nav::-webkit-scrollbar {
+  display: none; /* Oculta scrollbar en Chrome/Safari */
+}
+
+.scroll-horizontal-nav .nav {
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.scroll-horizontal-nav .nav-link {
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* Ajuste de logo para que no ocupe tanto espacio en el nuevo diseño */
+.logo-marca {
+  height: 40px;
+  width: auto;
+}
+/* Empuja el nombre a la derecha y ajusta el logo */
+.logo-marca {
+  height: 45px; /* Ajusta según prefieras */
+  width: auto;
+}
+
+.marca {
+  font-family: 'Roboto Condensed', sans-serif; /* O la que uses */
+  font-size: 1.4rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+/* Scroll horizontal sin barra visible */
+.scroll-horizontal-nav {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.scroll-horizontal-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-horizontal-nav .nav-link {
+  color: #444;
+  font-weight: 600;
 }

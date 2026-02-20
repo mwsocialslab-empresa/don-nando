@@ -390,30 +390,4 @@ const themeToggle = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 const body = document.body;
 
-// modo oscuro
-function setTheme(modo) {
-    const body = document.body;
-    
-    if (modo === 'oscuro') {
-        body.classList.add('dark-mode');
-        localStorage.setItem('tema-don-nando', 'oscuro');
-    } else {
-        body.classList.remove('dark-mode');
-        localStorage.setItem('tema-don-nando', 'claro');
-    }
-}
-
-// Al cargar la página, verificamos si ya había elegido un modo
-document.addEventListener("DOMContentLoaded", () => {
-    if (localStorage.getItem('tema-don-nando') === 'oscuro') {
-        document.body.classList.add('dark-mode');
-    }
-});
-
-
-
-
-
-
-
 
