@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pedidos Online - Carnicería</title>
+  <title>Don Nando - Pedidos Online</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -14,22 +12,19 @@
 </head>
 <body>
 
-
 <header class="main-header text-white text-center py-1">
   <p class="mb-0 small fw-bold">🛒 Pedidos Online - <span class="envio">ENVIOS A PARTIR DE 45.000$</span></p>
 </header>
-<body>
 
-
-<nav class="navbar navbar-light bg-white sticky-top shadow-sm py-2">
+<nav class="navbar navbar-light bg-white sticky-top shadow-sm py-2 ">
   <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
     
     <div class="d-flex align-items-center mb-2 mb-lg-0">
       <img src="img/logo.jpeg" alt="Logo Don Nando" class="logo-marca">
       <span class="marca color-marca ms-2">DON NANDO</span>
     </div>
-
-    <div class="w-100 w-lg-auto overflow-auto scroll-horizontal-nav mx-lg-auto justify-content-center ">
+  <div class="divisor-nav d-lg-none"></div>
+    <div class="w-100 w-lg-auto scroll-horizontal-nav mx-lg-auto justify-content-center">
       <ul class="nav nav-pills flex-nowrap white-space-nowrap justify-content-center">
         <li class="nav-item"><a href="#" class="nav-link px-2 px-lg-3" onclick="filtrar('todos'); return false;">Todos</a></li>
         <li class="nav-item"><a href="#" class="nav-link px-2 px-lg-3 text-danger fw-bold" onclick="filtrar('ofertas'); return false;">🔥 Ofertas</a></li>
@@ -46,8 +41,8 @@
         <span id="contadorNav" class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle" style="display:none">0</span>
       </button>
     </div>
-  
   </div>
+  
 </nav>
 
 <div class="container my-4">
@@ -58,16 +53,17 @@
     </div>
   </div>
 </div>
+
 <div class="modal fade" id="modalCerrado" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-white text-dark border-danger">
-      <div class="modal-header border-bottom">
-        <h5 class="modal-title fw-bold" style="color: #800000;">🐂 DON NANDO</h5>
+      <div class="modal-header border-bottom ">
+        <h5 class="modal-title fw-bold" style="color: #800000;">DON NANDO</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-center py-4">
-        <h4 class="mb-3 fw-bold">¡Local Cerrado!</h4>
-        <p>En este momento no estamos tomando pedidos online.</p>
+        <h4 class="mb-3 fw-bold">¡Estamos descansando!</h4>
+        <p>En este momento Don Nando no está tomando pedidos.</p>
         <div class="rounded p-3 mt-3" style="background-color: #f8d7da; border: 1px solid #f5c2c7;">
             <h6 class="fw-bold mb-2" style="color: #842029;">Nuestros horarios son:</h6>
             <p class="mb-1">Lun a Jue: 15:00 a 00:00</p>
@@ -102,28 +98,22 @@
 
         <div class="datos-cliente-container mb-3">
           <label class="form-label small fw-bold text-uppercase text-muted mb-3">📋 Datos del pedido</label>
-          
           <div class="input-group mb-2 custom-input-group">
             <span class="input-group-text bg-white border-end-0 opacity-75">👤</span>
             <input type="text" id="nombreCliente" class="form-control border-start-0 ps-0" placeholder="Nombre y Apellido">
           </div>
-
           <div class="input-group mb-2 custom-input-group">
             <span class="input-group-text bg-white border-end-0 opacity-75">📞</span>
             <input type="tel" id="telefonoCliente" class="form-control border-start-0 ps-0" placeholder="Número de Teléfono">
           </div>
-
           <div class="input-group custom-input-group">
             <span class="input-group-text bg-white border-end-0 opacity-75">📍</span>
             <input type="text" id="direccionModal" class="form-control border-start-0 ps-0" placeholder="Calle, número y localidad">
           </div>
-          
           <div id="errorDireccion" class="text-danger small mt-2 d-none fw-bold text-center">⚠️ Por favor, completa todos los datos para enviar tu pedido.</div>
         </div>
 
-        <p class="text-center text-muted mb-2" style="font-size: 0.85rem;">
-          Se abrirá WhatsApp para confirmar tu pedido
-        </p>
+        <p class="text-center text-muted mb-2" style="font-size: 0.85rem;">Se abrirá WhatsApp para confirmar tu pedido</p>
 
         <button class="btn btn-whatsapp w-100 py-3 fw-bold shadow-sm mb-2 btn-success-pedido d-flex align-items-center justify-content-center" onclick="enviarPedidoWhatsApp()">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" class="bi bi-whatsapp me-2" viewBox="0 0 16 16">
@@ -132,7 +122,7 @@
           Enviar pedido por WhatsApp
         </button>
         
-        <button class="btn btn-vaciar-carrito text-white w-100 py-2 fw-bold bg-danger" onclick="vaciarCarrito()">
+        <button class="btn btn-vaciar-carrito text-white w-100 py-2 fw-bold bg-danger" style="border-radius: 12px;" onclick="vaciarCarrito()">
           🗑 Vaciar Carrito
         </button>
       </div>
@@ -140,10 +130,12 @@
   </div>
 </div>
 
-  <button id="carritoFlotante" class="btn btn-success d-lg-none shadow-lg" data-bs-toggle="modal" data-bs-target="#modalCarrito">
-    🛒 <span id="contadorCarrito" class="badge bg-danger rounded-pill">0</span>
-  </button>
+<button id="carritoFlotante" class="btn btn-success d-lg-none shadow-lg" data-bs-toggle="modal" data-bs-target="#modalCarrito">
+  🛒 <span id="contadorCarrito" class="badge bg-danger rounded-pill">0</span>
+</button>
+
 <div id="toast-container" class="position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 10000;"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="./script.js"></script>
 </body>
