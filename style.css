@@ -245,3 +245,32 @@ body.dark-mode {
 button, .btn, .nav-link {
   touch-action: manipulation;
 }
+/* Botón de WhatsApp con el color oficial */
+.btn-whatsapp {
+    background-color: #25D366 !important; /* Verde oficial de WhatsApp */
+    color: white !important;
+    border: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+}
+
+.btn-whatsapp:hover {
+    background-color: #128C7E !important; /* Un tono más oscuro al pasar el mouse */
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 211, 102, 0.4);
+}
+
+.btn-whatsapp:active {
+    transform: scale(0.98);
+}
+
+/* Asegurar que el icono no se deforme */
+.btn-whatsapp img {
+    filter: brightness(0) invert(1); /* Opcional: pone el logo en blanco si prefieres */
+}
