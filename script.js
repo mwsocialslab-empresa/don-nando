@@ -5,7 +5,7 @@ const HORARIOS_ATENCION = {
     2: { inicio: "08:30", fin: "20:00" }, // Martes
     3: { inicio: "08:30", fin: "20:00" }, // Miércoles
     4: { inicio: "08:30", fin: "20:00" }, // Jueves
-    5: { inicio: "08:30", fin: "20:00" }, // Viernes
+    5: { inicio: "20:30", fin: "21:00" }, // Viernes
     6: { inicio: "08:30", fin: "20:00" }, // Sábado
     0: { inicio: "08:30", fin: "12:00" }  // Domingo
 };
@@ -104,13 +104,20 @@ function cambiarCantidad(i, v) {
 }
 
 function agregar(i) {
-    // NUEVA VALIDACIÓN: Si está cerrado, muestra el modal y detiene la ejecución
-    if (typeof estaAbierto === "function" && !estaAbierto()) {
-        const modalCerrado = new bootstrap.Modal(document.getElementById('modalCerrado'));
-        modalCerrado.show();
-        return; 
+    // 1. VALIDACIÓN DE HORARIO (Asegura que el cartel salga CADA VEZ que se presiona si está cerrado)
+    if (!estaAbierto()) {
+        const modalElement = document.getElementById('modalCerrado');
+        if (modalElement) {
+            // Forzamos la creación de una instancia nueva para que se dispare siempre
+            const modalCerrado = new bootstrap.Modal(modalElement);
+            modalCerrado.show();
+        } else {
+            alert("Local Cerrado"); 
+        }
+        return; // IMPORTANTE: Corta la ejecución aquí para que no se sume al carrito
     }
 
+    // 2. TU LÓGICA ORIGINAL (Se mantiene intacta)
     const input = document.getElementById(`cant${i}`);
     const cant = parseFloat(input.value);
     if (cant <= 0) return;
@@ -129,6 +136,29 @@ function agregar(i) {
 
     input.value = 0;
     actualizarCarrito();
+}
+
+// ASEGURATE DE TENER ESTA FUNCIÓN ASÍ PARA QUE NO FALLE EL CÁLCULO
+function estaAbierto() {
+    const ahora = new Date();
+    const dia = ahora.getDay(); // 0=Domingo, 1=Lunes...
+    const hora = ahora.getHours();
+    const minutos = ahora.getMinutes();
+    const hActual = hora * 100 + minutos;
+
+    const h = HORARIOS_ATENCION[dia];
+    if (!h) return false;
+
+    const [hI, mI] = h.inicio.split(":").map(Number);
+    const [hF, mF] = h.fin.split(":").map(Number);
+    const inicio = hI * 100 + mI;
+    const fin = hF * 100 + mF;
+
+    // Manejo de horarios que pasan la medianoche (ej: hasta las 01:00)
+    if (fin < inicio) {
+        return (hActual >= inicio || hActual <= fin);
+    }
+    return (hActual >= inicio && hActual <= fin);
 }
 
 function actualizarCarrito() {
@@ -197,24 +227,6 @@ function vaciarCarrito() {
     if(modalInst) modalInst.hide();
 }
 
-// ========================
-// LOGICA DE HORARIOS
-// ========================
-function estaAbierto() {
-    const ahora = new Date();
-    const dia = ahora.getDay();
-    const hActual = ahora.getHours() * 100 + ahora.getMinutes();
-    const h = HORARIOS_ATENCION[dia];
-    
-    if (!h) return false;
-    
-    const [hI, mI] = h.inicio.split(":").map(Number);
-    const [hF, mF] = h.fin.split(":").map(Number);
-    const inicio = hI * 100 + mI;
-    const fin = hF * 100 + mF;
-    
-    return fin < inicio ? (hActual >= inicio || hActual <= fin) : (hActual >= inicio && hActual <= fin);
-}
 
 // ========================
 // FINALIZAR PEDIDO

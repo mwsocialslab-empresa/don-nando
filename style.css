@@ -5,18 +5,25 @@
   font-family: 'Roboto Condensed', sans-serif !important;
   box-sizing: border-box;
 }
-
+html{
+  touch-action: manipulation;
+}
 body {
   background-color: #f8f9fa;
   margin: 0;
   overflow-x: hidden;
   line-height: 1.5;
+  touch-action: manipulation;
 }
 
 h1, h2, h3, h4, h5, h6, .fw-bold {
   font-weight: 800 !important;
 }
-
+button, 
+.btn, 
+.input-group-sm button {
+    touch-action: manipulation;
+}
 /* =========================================
    2. HEADER Y NAVEGACIÓN
    ========================================= */
@@ -207,3 +214,9 @@ h1, h2, h3, h4, h5, h6, .fw-bold {
 .modal { z-index: 2000 !important; }
 .modal-backdrop { z-index: 1950 !important; }
 #toast-container { z-index: 1045 !important; }
+.modal {
+    z-index: 9999 !important;
+}
+.modal-backdrop {
+    z-index: 9998 !important;
+}
